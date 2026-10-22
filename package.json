@@ -1,0 +1,10 @@
+{
+  "name": "homes-with-lewy",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Homes with Lewis Njuguna and verified Willstone Homes listings.",
+  "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+  "dependencies": { "@vitejs/plugin-react": "latest", "vite": "latest", "react": "latest", "react-dom": "latest" },
+  "devDependencies": {}
+}
