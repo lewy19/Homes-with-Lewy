@@ -7,6 +7,7 @@ const emptyProperty = { title: '', slug: '', location: '', price: '', currency: 
 const emptyProject = { title: '', slug: '', location: '', description: '', home_type: '', land_size: '', features: '', cover_image: '', published: false };
 const emptySocial = { platform: '', label: '', url: '', owner_scope: 'personal', is_active: true, sort_order: 0 };
 const slugify = value => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const adminEmails = new Set(['lewisnjuguna926@gmail.com', 'lewisnjuguna777@gmail.com']);
 
 export default function AdminPage() {
   const [session, setSession] = useState(null);
@@ -32,10 +33,11 @@ export default function AdminPage() {
   useEffect(() => {
     if (!supabase || !session?.user?.id) { setAuthorized(false); return undefined; }
     let active = true;
-    supabase.from('admin_users').select('user_id').eq('user_id', session.user.id).maybeSingle().then(async ({ data, error }) => {
+    const email = session.user.email?.trim().toLowerCase();
+    Promise.resolve().then(async () => {
       if (!active) return;
-      if (error || !data) {
-        setMessage('This account is not on the dashboard access list.');
+      if (!email || !adminEmails.has(email)) {
+        setMessage('This Google account is not on the dashboard access list.');
         setAuthorized(false);
         await supabase.auth.signOut();
         return;
@@ -43,7 +45,7 @@ export default function AdminPage() {
       setAuthorized(true);
     });
     return () => { active = false; };
-  }, [session?.user?.id]);
+  }, [session?.user?.id, session?.user?.email]);
 
   useEffect(() => { document.title = `Owner dashboard | Homes with Lew¥`; }, []);
 

@@ -32,13 +32,13 @@ Location and price filters appear only when the verified listings include data t
 
 ## Supabase and the owner dashboard
 
-The discreet lock icon in the site footer opens `/admin`. The dashboard uses Supabase Auth and checks `public.admin_users` before showing any records. Public visitors cannot read enquiries or draft/unverified listings; row-level security policies are defined in `supabase/schema.sql`.
+The discreet lock icon in the site footer opens `/admin`. The dashboard permits only `lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`; Supabase row-level security enforces the same email allowlist for private records. Public visitors cannot read enquiries or draft/unverified listings.
 
 1. Create a Supabase project.
-2. Run `supabase/schema.sql` once in the Supabase SQL Editor. It creates the tables and row-level security policies and adds the Whitepark 2 project profile plus known social links.
+2. Run `supabase/schema.sql` once in the Supabase SQL Editor. It creates the tables and row-level security policies and adds the Whitepark 2 project profile plus known social links. For an existing project, run `supabase/admin-email-allowlist.sql` to replace the prior user-ID admin check with the email allowlist.
 3. In Google Cloud Console, create an OAuth client for a Web application. Add your local site origin (for example, `http://localhost:5173`) and production site origin to **Authorized JavaScript origins**. In **Authorized redirect URIs**, add the callback URL shown on the Supabase **Authentication > Sign In / Providers > Google** page (it uses your project URL and `/auth/v1/callback`).
 4. Enable Google under **Supabase > Authentication > Sign In / Providers**, then paste the Google OAuth client ID and client secret there. In **Authentication > URL Configuration**, set your site URL and add `http://localhost:5173/**` plus your production URL to the allowed redirect URLs. The app returns to `/admin` after Google sign-in.
-5. Sign in with the Google account you want to use. In **Authentication > Users**, copy its user UUID and add it in the SQL Editor: `insert into public.admin_users (user_id) values ('AUTH_USER_UUID');` If the user already exists, check whether its UUID is already allowlisted before inserting.
+5. Sign in with either allowlisted Google account. Other Google accounts will be denied dashboard access.
 6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Never add the `service_role` key or Google client secret to frontend environment variables or commit a populated `.env` file.
 7. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
 

@@ -70,8 +70,9 @@ stable
 security definer
 set search_path = public
 as $$
-  select exists (
-    select 1 from public.admin_users where user_id = (select auth.uid())
+  select lower(coalesce((select auth.jwt() ->> 'email'), '')) in (
+    'lewisnjuguna926@gmail.com',
+    'lewisnjuguna777@gmail.com'
   );
 $$;
 
@@ -151,5 +152,4 @@ values
   ('youtube', 'YouTube', 'https://www.youtube.com/channel/UCgxMais9RLaUvoVHHAP83mQ', 'willstone', 3)
 on conflict (owner_scope, platform) do nothing;
 
--- After creating Lewis's account under Supabase Auth > Users, allowlist its UUID:
--- insert into public.admin_users (user_id) values ('AUTH_USER_UUID_HERE');
+-- Dashboard access is limited by email in public.is_site_admin().
