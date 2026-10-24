@@ -30,8 +30,23 @@ Edit `src/data/properties.js`. Only records marked `verified: true` are displaye
 
 Location and price filters appear only when the verified listings include data that supports them. Price and currency can be omitted; the card will say “Price on enquiry.” Do not add unverified facts, customer quotes, or photos without permission.
 
+## Supabase and the owner dashboard
+
+The discreet lock icon in the site footer opens `/admin`. The dashboard uses Supabase Auth and checks `public.admin_users` before showing any records. Public visitors cannot read enquiries or draft/unverified listings; row-level security policies are defined in `supabase/schema.sql`.
+
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` once in the Supabase SQL Editor. It creates the tables and row-level security policies and adds the Whitepark 2 project profile plus known social links.
+3. In Supabase Auth, create Lewis’s owner account manually and turn off public signups.
+4. Copy that user’s UUID from Auth > Users and add it in the SQL Editor: `insert into public.admin_users (user_id) values ('AUTH_USER_UUID');`
+5. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Never add the `service_role` key to frontend environment variables or commit a populated `.env` file.
+6. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
+
+The enquiry form writes to Supabase only when the project is configured and the schema has been applied. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
+
+Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by the RLS policies in `supabase/schema.sql`.
+
 ## Enquiries and contact details
 
-The form validates details, shows loading, error and confirmation states, and currently does not send or save personal information. Connect a verified enquiry service before accepting enquiries. Update the privacy notice to explain what happens to submitted details. The footer links to Willstone Homes’ public social profiles; add Lewis’s own verified email, phone and social profiles when available.
+Enquiries contain a visitor’s name, email, optional phone, selected property and message. They are visible only to an authorized dashboard account. Review enquiries and remove records that are no longer needed. The WhatsApp Channel is for updates; add a direct contact method separately if buyers should message Lewis directly.
 
 The homepage and Willstone Homes page include images from the “Mansionatte Photos” album Lewis shared, with the page gallery linking back to the source. The album is labeled as project imagery, not verified listings. The Willstone Homes page also includes selected images from the White Park 2 site-progress album, explicitly labeled as construction progress rather than homes currently for sale. White Park 2 image 4, which includes an unverified sign/contact number, is intentionally excluded.

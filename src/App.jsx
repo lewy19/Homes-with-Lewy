@@ -1,5 +1,7 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { properties } from './data/properties.js';
+import { isSupabaseConfigured, supabase } from './lib/supabase.js';
+import AdminPage from './AdminPage.jsx';
 
 const routes = [
   ['/', 'Home'], ['/homes', 'Homes'], ['/about-lewis', 'About Lewis'],
@@ -8,7 +10,41 @@ const routes = [
   ['/faqs', 'FAQs'], ['/willstone-homes', 'Willstone Homes'], ['/areas', 'Areas'],
   ['/privacy', 'Privacy'],
 ];
-const verifiedHomes = properties.filter(home => home.verified === true);
+const fallbackWhiteparkProject = {
+  title: 'Whitepark 2 Estate',
+  slug: 'whitepark-2-estate',
+  location: 'Joska, along Kangundo Road near the Greater Eastern Bypass',
+  description: 'A modern gated community offering spacious 3-bedroom bungalows with DSQ and cabro-paved driveways. Each is on a 50-by-100 piece of land with its own compound and garden.',
+  home_type: '3-bedroom bungalows with DSQ and cabro-paved driveways',
+  land_size: '50-by-100 (unit not specified)',
+  features: ['Own compound', 'Garden'],
+};
+
+function useVerifiedHomes() {
+  const [homes, setHomes] = useState(() => properties.filter(home => home.verified === true));
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('properties').select('*').eq('verified', true).eq('published', true).order('created_at', { ascending: false }).then(({ data, error }) => {
+      if (active && !error) setHomes((data || []).map(home => ({ ...home, image: home.image_url, imageAlt: home.image_alt })));
+    });
+    return () => { active = false; };
+  }, []);
+  return homes;
+}
+
+function useWhiteparkProject() {
+  const [project, setProject] = useState(fallbackWhiteparkProject);
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('projects').select('*').eq('slug', 'whitepark-2-estate').eq('published', true).maybeSingle().then(({ data, error }) => {
+      if (active && !error) setProject(data || null);
+    });
+    return () => { active = false; };
+  }, []);
+  return isSupabaseConfigured ? project : project || fallbackWhiteparkProject;
+}
 
 function usePageMeta(title, description) {
   useEffect(() => {
@@ -30,7 +66,25 @@ function Header() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="footer-top"><a className="brand brand-footer" href="/"><span className="brand-mark">H<span>W</span></span><span className="brand-name">Homes with <strong>Lew¥</strong></span></a><p>Making the search for somewhere<br/>feel a little more human.</p><a className="footer-top-link" href="#top">Back to the top ↑</a></div><div className="footer-links">{routes.slice(1).map(([path, label]) => <a key={path} href={path}>{label}</a>)}</div><div className="footer-social" aria-label="Homes with Lew¥ social profiles"><strong>Follow Homes with Lew¥</strong><span>Instagram · link coming soon</span><span>Facebook · link coming soon</span><span>Reddit · link coming soon</span><span>TikTok · link coming soon</span><span>YouTube · link coming soon</span><a href="https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g" target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a></div><div className="footer-social" aria-label="Official Willstone Homes social profiles"><strong>Follow Willstone Homes</strong><a href="https://www.facebook.com/willstonehomes/" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.instagram.com/willstone_homes/reel/DB3ND7RohC1/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://www.tiktok.com/@willstone.homes" target="_blank" rel="noopener noreferrer">TikTok ↗</a><a href="https://www.youtube.com/channel/UCgxMais9RLaUvoVHHAP83mQ" target="_blank" rel="noopener noreferrer">YouTube ↗</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homes with Lew¥ · Lewis Njuguna</span><span>IT support professional · Promotes and sells homes for Willstone Homes</span><a href="/enquire">Start a conversation ↗</a></div></footer>;
+  const [socialLinks, setSocialLinks] = useState(null);
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('social_links').select('platform,label,url,owner_scope,is_active,sort_order').eq('is_active', true).order('sort_order').then(({ data, error }) => {
+      if (active && !error) setSocialLinks(data || []);
+    });
+    return () => { active = false; };
+  }, []);
+  const personalLinks = socialLinks?.filter(link => link.owner_scope === 'personal');
+  const companyLinks = socialLinks?.filter(link => link.owner_scope === 'willstone');
+  const personalPlatforms = ['instagram', 'facebook', 'reddit', 'tiktok', 'youtube'];
+  const officialFallback = [
+    { label: 'Facebook', url: 'https://www.facebook.com/willstonehomes/' },
+    { label: 'Instagram', url: 'https://www.instagram.com/willstone_homes/reel/DB3ND7RohC1/' },
+    { label: 'TikTok', url: 'https://www.tiktok.com/@willstone.homes' },
+    { label: 'YouTube', url: 'https://www.youtube.com/channel/UCgxMais9RLaUvoVHHAP83mQ' },
+  ];
+  return <footer className="site-footer"><div className="footer-top"><a className="brand brand-footer" href="/"><span className="brand-mark">H<span>W</span></span><span className="brand-name">Homes with <strong>Lew¥</strong></span></a><p>Making the search for somewhere<br/>feel a little more human.</p><a className="footer-top-link" href="#top">Back to the top ↑</a></div><div className="footer-links">{routes.slice(1).map(([path, label]) => <a key={path} href={path}>{label}</a>)}</div><div className="footer-social" aria-label="Homes with Lew¥ social profiles"><strong>Follow Homes with Lew¥</strong>{personalPlatforms.map(platform => { const link = personalLinks?.find(item => item.platform === platform); return link ? <a key={platform} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a> : <span key={platform}>{platform[0].toUpperCase() + platform.slice(1)} · link coming soon</span>; })}{personalLinks?.find(item => item.platform === 'whatsapp') ? <a href={personalLinks.find(item => item.platform === 'whatsapp').url} target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a> : <a href="https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g" target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a>}</div><div className="footer-social" aria-label="Official Willstone Homes social profiles"><strong>Follow Willstone Homes</strong>{(companyLinks || officialFallback).map(link => <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homes with Lew¥ · Lewis Njuguna</span><span>IT support professional · Promotes and sells homes for Willstone Homes</span><a href="/enquire">Start a conversation ↗</a><a className="owner-entry" href="/admin" aria-label="Owner dashboard sign in" title="Owner sign in"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5a3.5 3.5 0 0 1 7 0v2M3 7h10v8H3z"/></svg></a></div></footer>;
 }
 
 function Eyebrow({ children }) { return <p className="eyebrow"><span className="eyebrow-line"/>{children}</p>; }
@@ -41,6 +95,7 @@ function PropertyCard({ home }) {
 }
 
 function ListingSection({ full = false }) {
+  const verifiedHomes = useVerifiedHomes();
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const locations = [...new Set(verifiedHomes.map(home => home.location).filter(Boolean))];
@@ -83,11 +138,15 @@ const progressPhotos = [
 ];
 
 function ProgressTeaser() {
-  return <section className="progress-teaser section-pad"><div className="progress-teaser-copy"><Eyebrow>From the shared album</Eyebrow><h2>A closer look at<br/><em>Whitepark 2 Estate.</em></h2><p>A modern gated community in Joska, along Kangundo Road near the Greater Eastern Bypass, offering spacious 3-bedroom bungalows with DSQ and cabro-paved driveways. Each is on a 50-by-100 piece of land with its own compound and garden. See selected site progress photos.</p><a className="text-link" href="/willstone-homes#white-park-2">See project photos <span aria-hidden="true">↗</span></a></div><a className="progress-teaser-image" href="/willstone-homes#white-park-2" aria-label="View Whitepark 2 Estate project information and progress photos"><img src="/images/white-park-2/progress-08.jpg" alt="Aerial view across rows of unfinished homes at White Park 2" loading="lazy"/><span>Whitepark 2 Estate · Site progress</span></a></section>;
+  const project = useWhiteparkProject();
+  if (!project) return null;
+  return <section className="progress-teaser section-pad"><div className="progress-teaser-copy"><Eyebrow>From the shared album</Eyebrow><h2>A closer look at<br/><em>{project.title}.</em></h2><p>{project.description} See selected site progress photos.</p><a className="text-link" href="/willstone-homes#white-park-2">See project photos <span aria-hidden="true">↗</span></a></div><a className="progress-teaser-image" href="/willstone-homes#white-park-2" aria-label={`View ${project.title} project information and progress photos`}><img src={project.cover_image || '/images/white-park-2/progress-08.jpg'} alt="Aerial view across rows of unfinished homes at White Park 2" loading="lazy"/><span>{project.title} · Site progress</span></a></section>;
 }
 
 function ProgressGallery() {
-  return <section className="progress-gallery" id="white-park-2" aria-labelledby="progress-title"><div className="gallery-heading"><Eyebrow>Shared site progress</Eyebrow><h2 id="progress-title">Whitepark 2 Estate</h2><p>Construction progress photos from the album Lewis shared. The project description below was provided by Lewis. Price, availability, and current sale status have not been provided.</p></div><div className="estate-summary"><div><span className="estate-label">THE PROJECT</span><h3>A modern gated community</h3><p>Spacious 3-bedroom bungalows with DSQ and cabro-paved driveways. Each is on a 50-by-100 piece of land with its own compound and garden. Located in Joska along Kangundo Road near the Greater Eastern Bypass.</p></div><dl><div><dt>Home type</dt><dd>3-bedroom bungalows with DSQ and cabro-paved driveways</dd></div><div><dt>Land and outdoor space</dt><dd>50-by-100 piece of land, own compound with a garden</dd></div><div><dt>Location</dt><dd>Joska, along Kangundo Road near the Greater Eastern Bypass</dd></div></dl></div><div className="progress-grid">{progressPhotos.map(([file, alt], index) => <a className="progress-photo" key={file} href={albumUrl} target="_blank" rel="noreferrer" aria-label={`Open the shared album, photo ${index + 1}`}><img src={`/images/white-park-2/${file}`} alt={alt} loading="lazy"/><span className="photo-count">{String(index + 1).padStart(2, '0')}</span></a>)}</div><a className="text-link gallery-link" href={albumUrl} target="_blank" rel="noreferrer">Open the shared Google Photos album <span aria-hidden="true">↗</span></a></section>;
+  const project = useWhiteparkProject();
+  if (!project) return null;
+  return <section className="progress-gallery" id="white-park-2" aria-labelledby="progress-title"><div className="gallery-heading"><Eyebrow>Shared site progress</Eyebrow><h2 id="progress-title">{project.title}</h2><p>Construction progress photos from the album Lewis shared. The project description below was provided by Lewis. Price, availability, and current sale status have not been provided.</p></div><div className="estate-summary"><div><span className="estate-label">THE PROJECT</span><h3>A modern gated community</h3><p>{project.description}</p></div><dl><div><dt>Home type</dt><dd>{project.home_type || 'Details not provided'}</dd></div><div><dt>Land and outdoor space</dt><dd>{[project.land_size, ...(project.features || [])].filter(Boolean).join(' · ') || 'Details not provided'}</dd></div><div><dt>Location</dt><dd>{project.location}</dd></div></dl></div><div className="progress-grid">{progressPhotos.map(([file, alt], index) => <a className="progress-photo" key={file} href={albumUrl} target="_blank" rel="noreferrer" aria-label={`Open the shared album, photo ${index + 1}`}><img src={`/images/white-park-2/${file}`} alt={alt} loading="lazy"/><span className="photo-count">{String(index + 1).padStart(2, '0')}</span></a>)}</div><a className="text-link gallery-link" href={albumUrl} target="_blank" rel="noreferrer">Open the shared Google Photos album <span aria-hidden="true">↗</span></a></section>;
 }
 
 const mansionatteAlbumUrl = 'https://photos.google.com/share/AF1QipOgUIyhANUrjDdsCcjJQSN_2HjzmjAaN8ye-BdUCC8DrAHVNGuJ-uy7e0QTDoKTkA?key=NFhnaG5DQzcyeENleFlFSTZ1VEdDZGtMclh5RGVB';
@@ -160,11 +219,13 @@ function AreasPage() {
 
 function PrivacyPage() {
   usePageMeta('Privacy', 'How enquiry information is handled in this Homes with Lew¥ website preview.');
-  return <ContentPage eyebrow="Your information" title={<>A clear note about <em>privacy.</em></>} lead="This website preview does not transmit or store information entered in its enquiry form."><div className="article-copy"><h2>In this preview</h2><p>The form checks the information you enter in your browser and displays a local confirmation. It does not send your details to Lewis or a third party, and it does not save them to a database.</p><h2>Before enquiries are enabled</h2><p>A verified form destination and an appropriate privacy notice need to be configured before real enquiries are accepted. That notice should explain who receives the information, why it is collected, how long it is kept and how to ask for it to be updated or removed.</p><h2>Questions</h2><p>Lewis’s verified contact details have not been provided for this page. Add them here before publishing a live enquiry service.</p></div></ContentPage>;
+  const configuredNotice = isSupabaseConfigured ? 'When you submit the form, your enquiry is sent to the Homes with Lew¥ Supabase database and made available to Lewis through the owner dashboard.' : 'The enquiry form is not connected yet. Information entered here is not sent or saved.';
+  return <ContentPage eyebrow="Your information" title={<>A clear note about <em>privacy.</em></>} lead={configuredNotice}><div className="article-copy"><h2>Enquiry information</h2><p>{configuredNotice} Enquiries include the name, email address, optional phone number, selected property and message you provide.</p><h2>Access and handling</h2><p>Dashboard access is restricted to an account explicitly added to the site administrator list. Lewis should review enquiries and remove records that are no longer needed. Do not submit sensitive financial or identity information through this form.</p><h2>Questions</h2><p>Contact Lewis through a verified contact method listed on this website.</p></div></ContentPage>;
 }
 
 function EnquiryPage() {
   usePageMeta('Make an enquiry', 'Send Lewis a question about a verified Willstone Homes listing or make a general home enquiry.');
+  const verifiedHomes = useVerifiedHomes();
   const requestedProperty = new URLSearchParams(window.location.search).get('property') || '';
   const [form, setForm] = useState({ name: '', email: '', phone: '', property: requestedProperty, message: '' });
   const [errors, setErrors] = useState({});
@@ -180,16 +241,18 @@ function EnquiryPage() {
     if (form.message.trim().length < 10) next.message = 'Please share at least 10 characters.';
     setErrors(next);
     if (Object.keys(next).length) { setStatus({ type: 'error', text: 'Please check the highlighted fields and try again.' }); return; }
-    setLoading(true); setStatus({ type: 'loading', text: 'Preparing your enquiry…' });
+    if (!supabase) { setStatus({ type: 'error', text: 'Online enquiries are not connected yet. Your message has not been sent or saved.' }); return; }
+    setLoading(true); setStatus({ type: 'loading', text: 'Sending your enquiry…' });
     try {
-      await new Promise(resolve => window.setTimeout(resolve, 650));
-      setStatus({ type: 'success', text: 'Your enquiry is ready. This preview does not send or save your details; connect a verified contact destination to deliver it to Lewis.' });
+      const { error } = await supabase.from('enquiries').insert({ name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim() || null, property_title: form.property || null, message: form.message.trim() });
+      if (error) throw error;
+      setStatus({ type: 'success', text: 'Your enquiry has been sent to Lewis.' });
       setForm({ name: '', email: '', phone: '', property: '', message: '' });
     } catch {
-      setStatus({ type: 'error', text: 'Something went wrong while preparing your enquiry. Please try again.' });
+      setStatus({ type: 'error', text: 'We could not send your enquiry. Please try again later.' });
     } finally { setLoading(false); }
   }
-  return <ContentPage eyebrow="Start a conversation" title={<>The right home starts<br/>with <em>a hello.</em></>} lead="Tell Lewis a little about what you’re looking for. The form on this preview does not send or store personal information."><form className="enquiry-form" onSubmit={submit} noValidate><div className="form-top"><span>YOUR ENQUIRY</span><span className="required-legend"><i>*</i> Required</span></div><div className="form-row"><Field label="Your name" name="name" value={form.name} onChange={update} error={errors.name} required autoComplete="name" placeholder="Your name"/><Field label="Email address" name="email" type="email" value={form.email} onChange={update} error={errors.email} required autoComplete="email" placeholder="you@example.com"/></div><Field label="Phone number" name="phone" type="tel" value={form.phone} onChange={update} error={errors.phone} autoComplete="tel" placeholder="Your preferred number" optional/><div className="field"><label htmlFor="property">Property of interest <span className="optional">(optional)</span></label><select id="property" name="property" value={form.property} onChange={update}><option value="">General enquiry</option>{verifiedHomes.map(home => <option key={home.title} value={home.title}>{home.title} — {home.location}</option>)}</select></div><div className="field"><label htmlFor="message">What are you looking for? <i>*</i></label><textarea id="message" name="message" rows="4" minLength="10" required value={form.message} onChange={update} placeholder="Tell Lewis what matters to you in a home…" aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined}/>{errors.message && <span className="field-error" id="message-error">{errors.message}</span>}</div><p className="form-privacy">Your details stay in this browser preview. Nothing is sent or saved.</p>{status.text && <div className="form-status" data-state={status.type} role="status" aria-live="polite">{status.text}</div>}<button className="button button-dark submit-button" type="submit" disabled={loading}>{loading ? 'Preparing your enquiry…' : 'Prepare enquiry'} {!loading && <span aria-hidden="true">↗</span>}</button></form><p className="page-outro">Prefer to contact Lewis directly? Verified contact details will appear here once provided.</p></ContentPage>;
+  return <ContentPage eyebrow="Start a conversation" title={<>The right home starts<br/>with <em>a hello.</em></>} lead={supabase ? 'Tell Lewis a little about what you’re looking for. Your enquiry will be stored in the owner dashboard.' : 'Tell Lewis a little about what you’re looking for. Online enquiries are not connected yet.'}><form className="enquiry-form" onSubmit={submit} noValidate><div className="form-top"><span>YOUR ENQUIRY</span><span className="required-legend"><i>*</i> Required</span></div><div className="form-row"><Field label="Your name" name="name" value={form.name} onChange={update} error={errors.name} required autoComplete="name" placeholder="Your name"/><Field label="Email address" name="email" type="email" value={form.email} onChange={update} error={errors.email} required autoComplete="email" placeholder="you@example.com"/></div><Field label="Phone number" name="phone" type="tel" value={form.phone} onChange={update} error={errors.phone} autoComplete="tel" placeholder="Your preferred number" optional/><div className="field"><label htmlFor="property">Property of interest <span className="optional">(optional)</span></label><select id="property" name="property" value={form.property} onChange={update}><option value="">General enquiry</option>{verifiedHomes.map(home => <option key={home.title} value={home.title}>{home.title} — {home.location}</option>)}</select></div><div className="field"><label htmlFor="message">What are you looking for? <i>*</i></label><textarea id="message" name="message" rows="4" minLength="10" required value={form.message} onChange={update} placeholder="Tell Lewis what matters to you in a home…" aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined}/>{errors.message && <span className="field-error" id="message-error">{errors.message}</span>}</div><p className="form-privacy">{supabase ? 'Your enquiry is stored in Supabase and visible only to an authorized site administrator.' : 'Your details are not sent or saved until the enquiry service is connected.'}</p>{status.text && <div className="form-status" data-state={status.type} role="status" aria-live="polite">{status.text}</div>}<button className="button button-dark submit-button" type="submit" disabled={loading || !supabase}>{loading ? 'Sending your enquiry…' : supabase ? 'Send enquiry' : 'Enquiries not connected'} {supabase && !loading && <span aria-hidden="true">↗</span>}</button></form><p className="page-outro">Prefer to contact Lewis directly? Use the WhatsApp Channel link in the footer for updates.</p></ContentPage>;
 }
 
 function Field({ label, name, value, onChange, error, required, optional, ...props }) {
@@ -209,6 +272,7 @@ function NotFound() {
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
+  if (path === '/admin') return <AdminPage/>;
   const Page = pageComponents[path] || NotFound;
   return <><a className="skip-link" href="#main">Skip to content</a><div id="top"><Header/></div><div id="main"><Page/></div><Footer/></>;
 }
