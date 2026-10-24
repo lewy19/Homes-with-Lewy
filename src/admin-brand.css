@@ -1,0 +1,10 @@
+.admin-shell{grid-template-columns:260px minmax(0,1fr)}
+.admin-sidebar{padding-inline:17px}
+.admin-sidebar .admin-brand{gap:14px;width:100%;font-size:17px;line-height:1.2}
+.admin-sidebar .admin-brand-mark{width:54px;height:54px;flex:none;font-size:20px}
+.admin-sidebar .admin-brand small{margin-top:7px;color:#d9c39f;font-size:10px;letter-spacing:1.45px}
+.admin-gate .admin-brand{gap:13px;font-size:16px}
+.admin-gate .admin-brand-mark{width:48px;height:48px;font-size:18px}
+.admin-gate .admin-brand small{font-size:9px;color:#899083}
+@media(max-width:900px){.admin-shell{grid-template-columns:230px minmax(0,1fr)}.admin-sidebar .admin-brand{gap:11px;font-size:15px}.admin-sidebar .admin-brand-mark{width:46px;height:46px;font-size:18px}.admin-sidebar .admin-brand small{font-size:9px}}
+@media(max-width:600px){.admin-sidebar{padding:13px 15px}.admin-sidebar .admin-brand{margin:0 0 13px}}

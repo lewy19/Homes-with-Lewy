@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { isSupabaseConfigured, supabase } from './lib/supabase.js';
 import './admin.css';
 import './admin-google.css';
+import './admin-brand.css';
 
 const emptyProperty = { title: '', slug: '', location: '', price: '', currency: '', beds: '', baths: '', summary: '', image_url: '', image_alt: '', verified: false, published: false };
 const emptyProject = { title: '', slug: '', location: '', description: '', home_type: '', land_size: '', features: '', cover_image: '', published: false };
@@ -57,7 +58,7 @@ export default function AdminPage() {
 }
 
 function AdminFrame({ children }) {
-  return <main className="admin-gate"><a className="admin-brand" href="/"><span className="admin-brand-mark">LN</span><span>Homes with <strong>Lew¥</strong></span></a>{children}</main>;
+  return <main className="admin-gate"><a className="admin-brand" href="/"><span className="admin-brand-mark">LN</span><span>Homes with <strong>Lew¥</strong><small>OWNER DASHBOARD</small></span></a>{children}</main>;
 }
 
 function LoginForm({ message, onMessage }) {
