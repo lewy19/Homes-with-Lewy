@@ -1,0 +1,3 @@
+.admin-google-button{width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:11px;margin:24px 0 10px;background:#fffefa;color:#283026;border:1px solid #d9d6ce;font-size:12px}
+.admin-google-button:hover:not(:disabled){background:#f5f4ef}
+.admin-google-mark{width:19px;height:19px;flex:none}

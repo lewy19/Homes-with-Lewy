@@ -36,10 +36,11 @@ The discreet lock icon in the site footer opens `/admin`. The dashboard uses Sup
 
 1. Create a Supabase project.
 2. Run `supabase/schema.sql` once in the Supabase SQL Editor. It creates the tables and row-level security policies and adds the Whitepark 2 project profile plus known social links.
-3. In Supabase Auth, create Lewis’s owner account manually and turn off public signups.
-4. Copy that user’s UUID from Auth > Users and add it in the SQL Editor: `insert into public.admin_users (user_id) values ('AUTH_USER_UUID');`
-5. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Never add the `service_role` key to frontend environment variables or commit a populated `.env` file.
-6. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
+3. In Google Cloud Console, create an OAuth client for a Web application. Add your local site origin (for example, `http://localhost:5173`) and production site origin to **Authorized JavaScript origins**. In **Authorized redirect URIs**, add the callback URL shown on the Supabase **Authentication > Sign In / Providers > Google** page (it uses your project URL and `/auth/v1/callback`).
+4. Enable Google under **Supabase > Authentication > Sign In / Providers**, then paste the Google OAuth client ID and client secret there. In **Authentication > URL Configuration**, set your site URL and add `http://localhost:5173/**` plus your production URL to the allowed redirect URLs. The app returns to `/admin` after Google sign-in.
+5. Sign in with the Google account you want to use. In **Authentication > Users**, copy its user UUID and add it in the SQL Editor: `insert into public.admin_users (user_id) values ('AUTH_USER_UUID');` If the user already exists, check whether its UUID is already allowlisted before inserting.
+6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Never add the `service_role` key or Google client secret to frontend environment variables or commit a populated `.env` file.
+7. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
 
 The enquiry form writes to Supabase only when the project is configured and the schema has been applied. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
 

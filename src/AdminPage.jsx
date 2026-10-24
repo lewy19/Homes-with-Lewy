@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { isSupabaseConfigured, supabase } from './lib/supabase.js';
 import './admin.css';
+import './admin-google.css';
 
 const emptyProperty = { title: '', slug: '', location: '', price: '', currency: '', beds: '', baths: '', summary: '', image_url: '', image_alt: '', verified: false, published: false };
 const emptyProject = { title: '', slug: '', location: '', description: '', home_type: '', land_size: '', features: '', cover_image: '', published: false };
@@ -58,17 +59,23 @@ function AdminFrame({ children }) {
 }
 
 function LoginForm({ message, onMessage }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
-  async function submit(event) {
-    event.preventDefault();
+  async function signInWithGoogle() {
     setBusy(true); onMessage('');
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    if (error) onMessage('Sign in failed. Check your email and password, then try again.');
-    setBusy(false);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/admin` },
+    });
+    if (error) {
+      onMessage(`Google sign-in could not start: ${error.message}`);
+      setBusy(false);
+    }
   }
-  return <AdminFrame><section className="admin-card admin-login"><span className="admin-kicker">PRIVATE OWNER ACCESS</span><h1>Sign in to your dashboard.</h1><p>Use the owner account created in Supabase Auth.</p><form onSubmit={submit}><label>Email address<input type="email" autoComplete="username" required value={email} onChange={event => setEmail(event.target.value)}/></label><label>Password<input type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.target.value)}/></label>{message && <p className="admin-alert" role="alert">{message}</p>}<button className="admin-primary" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button></form><a className="admin-back" href="/">← Back to Homes with Lew¥</a></section></AdminFrame>;
+  return <AdminFrame><section className="admin-card admin-login"><span className="admin-kicker">PRIVATE OWNER ACCESS</span><h1>Sign in to your dashboard.</h1><p>Continue with the Google account authorized for dashboard access.</p>{message && <p className="admin-alert" role="alert">{message}</p>}<button className="admin-primary admin-google-button" onClick={signInWithGoogle} disabled={busy}>{busy ? 'Connecting to Google…' : <><GoogleMark/>Continue with Google</>}</button><a className="admin-back" href="/">← Back to Homes with Lew¥</a></section></AdminFrame>;
+}
+
+function GoogleMark() {
+  return <svg className="admin-google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M43.6 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11a9.4 9.4 0 0 1-4.1 6.2v5.2h6.7c3.9-3.6 6-8.9 6-15.4Z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.7-5.2c-1.8 1.2-4 1.9-6.8 1.9-5.3 0-9.8-3.6-11.4-8.4H5.7v5.4A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.6 27.4a12 12 0 0 1 0-6.8v-5.4H5.7a20 20 0 0 0 0 17.6l6.9-5.4Z"/><path fill="#EA4335" d="M24 12.2c3 0 5.6 1 7.7 3.1l5.8-5.8C34 6.1 29.5 4 24 4A20 20 0 0 0 5.7 15.2l6.9 5.4c1.6-4.8 6.1-8.4 11.4-8.4Z"/></svg>;
 }
 
 function AdminWorkspace({ session }) {
