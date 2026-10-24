@@ -42,6 +42,8 @@ The discreet lock icon in the site footer opens `/admin`. The dashboard permits 
 6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Never add the `service_role` key or Google client secret to frontend environment variables or commit a populated `.env` file.
 7. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
 
+To add Lewis’s Reddit profile to an existing database, run `supabase/add-reddit-social-link.sql` in the Supabase SQL Editor. The profile is also included in the starter schema and the local no-database fallback.
+
 The enquiry form writes to Supabase only when the project is configured and the schema has been applied. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
 
 Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by the RLS policies in `supabase/schema.sql`.
