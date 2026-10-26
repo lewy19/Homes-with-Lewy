@@ -129,6 +129,7 @@ function HomePage() {
 function RoleCard() { return <div className="role-card"><span className="role-icon" aria-hidden="true">✳</span><span><strong>Two roles, one clear introduction.</strong><small>IT support professional · Promotes and sells homes for Willstone Homes</small></span></div>; }
 
 const albumUrl = 'https://photos.google.com/share/AF1QipOu3va-AAbotEKb8fu-8ySY73u4rHnFZZk05JHmJQNplyM7dWvIyXhvoqKeFpYfQw?key=UzlyRDRWcHduRWZ2U2tSb1NXWjhJRW8wM1NiOU53';
+const septemberAlbumUrl = 'https://photos.google.com/share/AF1QipNrA9C9w7D9D0hEbT4w7fB2D1qITtwDeE1PUP3nmKJzTXCMqxgxzJbn5VIlZPRLlA?key=aWp0QjBiRlRJYW4zZ09Md0ExMHZMcE81encwLXN3';
 const progressPhotos = [
   ['progress-01.jpg', 'Aerial view over rows of unfinished masonry homes at White Park 2, with green fields in the distance.'],
   ['progress-02.jpg', 'A row of unfinished masonry homes, some with tiled roofs and one with exposed roof framing.'],
@@ -141,6 +142,7 @@ const progressPhotos = [
   ['progress-10.jpg', 'Aerial view of unfinished homes and several partially roofed buildings at the site.'],
   ['progress-11.jpg', 'Wide aerial view of construction progress across multiple rows of unfinished buildings.'],
   ['progress-12.jpg', 'Aerial view down the central dirt road between rows of homes at different construction stages.'],
+  ['progress-sept16-cover.jpg', 'Whitepark 2 bungalow with a tiled pitched roof, visible timber roof edges, and unfinished exterior walls.', septemberAlbumUrl],
 ];
 
 function ProgressTeaser() {
@@ -152,7 +154,7 @@ function ProgressTeaser() {
 function ProgressGallery() {
   const project = useWhiteparkProject();
   if (!project) return null;
-  return <section className="progress-gallery" id="white-park-2" aria-labelledby="progress-title"><div className="gallery-heading"><Eyebrow>Shared site progress</Eyebrow><h2 id="progress-title">{project.title}</h2><p>Construction progress photos from the album Lewis shared. The project description below was provided by Lewis. Price, availability, and current sale status have not been provided.</p></div><div className="estate-summary"><div><span className="estate-label">THE PROJECT</span><h3>A modern gated community</h3><p>{project.description}</p></div><dl><div><dt>Home type</dt><dd>{project.home_type || 'Details not provided'}</dd></div><div><dt>Land and outdoor space</dt><dd>{[project.land_size, ...(project.features || [])].filter(Boolean).join(' · ') || 'Details not provided'}</dd></div><div><dt>Location</dt><dd>{project.location}</dd></div></dl></div><div className="progress-grid">{progressPhotos.map(([file, alt], index) => <a className="progress-photo" key={file} href={albumUrl} target="_blank" rel="noreferrer" aria-label={`Open the shared album, photo ${index + 1}`}><img src={`/images/white-park-2/${file}`} alt={alt} loading="lazy"/><span className="photo-count">{String(index + 1).padStart(2, '0')}</span></a>)}</div><a className="text-link gallery-link" href={albumUrl} target="_blank" rel="noreferrer">Open the shared Google Photos album <span aria-hidden="true">↗</span></a></section>;
+  return <section className="progress-gallery" id="white-park-2" aria-labelledby="progress-title"><div className="gallery-heading"><Eyebrow>Shared site progress</Eyebrow><h2 id="progress-title">{project.title}</h2><p>Construction progress photos from the albums Lewis shared. The project description below was provided by Lewis. Price, availability, and current sale status have not been provided.</p></div><div className="estate-summary"><div><span className="estate-label">THE PROJECT</span><h3>A modern gated community</h3><p>{project.description}</p></div><dl><div><dt>Home type</dt><dd>{project.home_type || 'Details not provided'}</dd></div><div><dt>Land and outdoor space</dt><dd>{[project.land_size, ...(project.features || [])].filter(Boolean).join(' · ') || 'Details not provided'}</dd></div><div><dt>Location</dt><dd>{project.location}</dd></div></dl></div><div className="progress-grid">{progressPhotos.map(([file, alt, photoAlbum = albumUrl], index) => <a className="progress-photo" key={file} href={photoAlbum} target="_blank" rel="noreferrer" aria-label={`Open the shared album for photo ${index + 1}`}><img src={`/images/white-park-2/${file}`} alt={alt} loading="lazy"/><span className="photo-count">{String(index + 1).padStart(2, '0')}</span></a>)}</div><a className="text-link gallery-link" href={albumUrl} target="_blank" rel="noreferrer">Open the original Google Photos album <span aria-hidden="true">↗</span></a><a className="text-link gallery-link" href={septemberAlbumUrl} target="_blank" rel="noreferrer">Open the September site progress album <span aria-hidden="true">↗</span></a></section>;
 }
 
 const mansionatteAlbumUrl = 'https://photos.google.com/share/AF1QipOgUIyhANUrjDdsCcjJQSN_2HjzmjAaN8ye-BdUCC8DrAHVNGuJ-uy7e0QTDoKTkA?key=NFhnaG5DQzcyeENleFlFSTZ1VEdDZGtMclh5RGVB';
