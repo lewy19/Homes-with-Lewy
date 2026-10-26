@@ -146,7 +146,8 @@ on conflict (slug) do nothing;
 insert into public.social_links (platform, label, url, owner_scope, sort_order)
 values
   ('whatsapp', 'WhatsApp Channel', 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g', 'personal', 0),
-  ('reddit', 'Reddit', 'https://www.reddit.com/user/Mission-Bluebird5874/', 'personal', 1),
+  ('facebook', 'Facebook', 'https://web.facebook.com/profile.php?id=61583083756453', 'personal', 1),
+  ('reddit', 'Reddit', 'https://www.reddit.com/user/Mission-Bluebird5874/', 'personal', 2),
   ('facebook', 'Facebook', 'https://www.facebook.com/willstonehomes/', 'willstone', 0),
   ('instagram', 'Instagram', 'https://www.instagram.com/willstone_homes/reel/DB3ND7RohC1/', 'willstone', 1),
   ('tiktok', 'TikTok', 'https://www.tiktok.com/@willstone.homes', 'willstone', 2),

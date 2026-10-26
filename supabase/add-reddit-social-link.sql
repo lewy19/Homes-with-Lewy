@@ -6,7 +6,7 @@ values (
   'https://www.reddit.com/user/Mission-Bluebird5874/',
   'personal',
   true,
-  1
+  2
 )
 on conflict (owner_scope, platform) do update
 set label = excluded.label,

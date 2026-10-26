@@ -75,9 +75,12 @@ function Footer() {
     });
     return () => { active = false; };
   }, []);
-  const redditFallback = { platform: 'reddit', label: 'Reddit', url: 'https://www.reddit.com/user/Mission-Bluebird5874/', owner_scope: 'personal', is_active: true, sort_order: 2 };
+  const personalFallbacks = [
+    { platform: 'facebook', label: 'Facebook', url: 'https://web.facebook.com/profile.php?id=61583083756453', owner_scope: 'personal', is_active: true, sort_order: 1 },
+    { platform: 'reddit', label: 'Reddit', url: 'https://www.reddit.com/user/Mission-Bluebird5874/', owner_scope: 'personal', is_active: true, sort_order: 2 },
+  ];
   const personalRows = socialLinks?.filter(link => link.owner_scope === 'personal' && link.is_active);
-  const personalLinks = socialLinks === null ? [redditFallback] : personalRows;
+  const personalLinks = socialLinks === null ? personalFallbacks : personalRows;
   const companyLinks = socialLinks?.filter(link => link.owner_scope === 'willstone' && link.is_active);
   const personalPlatforms = ['instagram', 'facebook', 'reddit', 'tiktok', 'youtube'];
   const officialFallback = [
