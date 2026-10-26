@@ -35,7 +35,7 @@ function makeReply(message, homes) {
     return { text: 'I can help with public information about Homes with Lew¥, Willstone Homes and the homes shared here. For other questions, please contact Lewis through the public enquiry form.', links: [{ label: 'Contact Lewis', href: '/enquire' }] };
   }
   if (/social|instagram|facebook|reddit|tiktok|youtube|follow/.test(text)) {
-    return { text: 'You can find the public Homes with Lew¥ and Willstone Homes social links in the website footer. The WhatsApp Channel shares updates; for a property question, send Lewis an enquiry.', links: [{ label: 'WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
+    return { text: 'You can find the public Homes with Lew¥ and Willstone Homes social links in the website footer. The WhatsApp Channel shares updates. You can message Lewis directly on WhatsApp or send a site enquiry.', links: [{ label: 'Message Lewis on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   if (/white ?park|joska|bungalow|dsq|driveway|garden|compound/.test(text)) {
     return {
@@ -63,10 +63,10 @@ function makeReply(message, homes) {
     return { text: 'The buying guide and viewing checklist can help you organise your questions. Confirm property, legal and financial details with the relevant professionals.', links: [{ label: 'Home buying guide', href: '/buying-guide' }, { label: 'Viewing checklist', href: '/viewing-checklist' }] };
   }
   if (/whatsapp/.test(text)) {
-    return { text: 'The WhatsApp Channel shares updates. For a question about a property, send Lewis an enquiry.', links: [{ label: 'Open WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
+    return { text: 'The WhatsApp Channel shares updates. For a property question, message Lewis directly on WhatsApp or send a site enquiry.', links: [{ label: 'Message Lewis on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'Open WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   if (/contact|enquir|message|talk|human|help/.test(text)) {
-    return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Call Lewis', href: 'tel:+254114998890' }, { label: 'Send an enquiry', href: '/enquire' }] };
+    return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Call Lewis', href: 'tel:+254114998890' }, { label: 'Message on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   return { text: 'I can help with confirmed site information and navigation. Try asking about Whitepark 2, current listings, Lewis, the buying guide, or send Lewis an enquiry.' };
 }
