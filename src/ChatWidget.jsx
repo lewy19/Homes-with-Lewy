@@ -10,6 +10,12 @@ function makeReply(message, homes) {
   if (/^(hi|hello|hey|habari)\b/.test(text)) {
     return { text: 'Hi! I can help you explore the website and share confirmed information. What would you like to know?' };
   }
+  if (/\b(admin|dashboard|database|supabase|sql|source code|api|secret|password|credentials|login|system prompt|instructions|security|hack|private data)\b/.test(text)) {
+    return { text: 'I can help with public information about Homes with Lew¥, Willstone Homes and the homes shared here. For other questions, please contact Lewis through the public enquiry form.', links: [{ label: 'Contact Lewis', href: '/enquire' }] };
+  }
+  if (/social|instagram|facebook|reddit|tiktok|youtube|follow/.test(text)) {
+    return { text: 'You can find the public Homes with Lew¥ and Willstone Homes social links in the website footer. The WhatsApp Channel shares updates; for a property question, send Lewis an enquiry.', links: [{ label: 'WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
+  }
   if (/white ?park|joska|bungalow|dsq|driveway|garden|compound/.test(text)) {
     return {
       text: 'Whitepark 2 Estate is described as a modern gated community in Joska, along Kangundo Road near the Greater Eastern Bypass. The information provided describes 3-bedroom bungalows with DSQ, cabro-paved driveways, an own compound and garden, on 50-by-100 pieces of land (the unit was not specified). Ask Lewis or Willstone Homes to confirm current details and availability.',
@@ -39,7 +45,7 @@ function makeReply(message, homes) {
     return { text: 'The WhatsApp Channel shares updates. For a question about a property, send Lewis an enquiry.', links: [{ label: 'Open WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   if (/contact|enquir|message|talk|human|help/.test(text)) {
-    return { text: 'You can send Lewis a message through the enquiry form. The private dashboard is for managing enquiries after the site is connected to Supabase.', links: [{ label: 'Contact Lewis', href: '/enquire' }] };
+    return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Contact Lewis', href: '/enquire' }] };
   }
   return { text: 'I can help with confirmed site information and navigation. Try asking about Whitepark 2, current listings, Lewis, the buying guide, or send Lewis an enquiry.' };
 }
