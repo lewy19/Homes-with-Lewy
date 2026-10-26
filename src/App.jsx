@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { properties } from './data/properties.js';
 import { isSupabaseConfigured, supabase } from './lib/supabase.js';
 import AdminPage from './AdminPage.jsx';
+import ChatWidget from './ChatWidget.jsx';
 
 const routes = [
   ['/', 'Home'], ['/homes', 'Homes'], ['/about-lewis', 'About Lewis'],
@@ -279,6 +280,6 @@ export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   if (path === '/admin') return <AdminPage/>;
   const Page = pageComponents[path] || NotFound;
-  return <><a className="skip-link" href="#main">Skip to content</a><div id="top"><Header/></div><div id="main"><Page/></div><Footer/></>;
+  return <><a className="skip-link" href="#main">Skip to content</a><div id="top"><Header/></div><div id="main"><Page/></div><Footer/><ChatWidget/></>;
 }
 

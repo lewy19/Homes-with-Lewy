@@ -46,6 +46,8 @@ To add Lewis’s Reddit profile to an existing database, run `supabase/add-reddi
 
 To add Lewis’s personal Facebook profile to an existing database, run `supabase/add-personal-facebook-social-link.sql` in the Supabase SQL Editor. It is separate from the Willstone Homes Facebook page.
 
+The floating site helper answers a small set of questions from confirmed site information and links to relevant pages. It is a local scripted assistant, not a live AI or human chat; messages are not transmitted or stored.
+
 The enquiry form writes to Supabase only when the project is configured and the schema has been applied. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
 
 Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by the RLS policies in `supabase/schema.sql`.
