@@ -7,6 +7,18 @@ const quickPrompts = ['Explore homes', 'Tell me about Whitepark 2', 'Talk to Lew
 
 function makeReply(message, homes) {
   const text = message.toLowerCase();
+  if (/\b(what('?s| is) your name|who are you)\b/.test(text)) {
+    return { text: 'I’m LUMA, the Homes with Lew¥ site assistant. Nice to meet you! I can help you find public information about homes and the business.' };
+  }
+  if (/\b(are you (a )?(person|human|real person)|are you ai|are you a bot|are you real)\b/.test(text)) {
+    return { text: 'I’m an automated site assistant, not a person. I’m here to make it easier to explore Homes with Lew¥ and ask about homes.' };
+  }
+  if (/\b(what can you do|what do you do|what can you help with|how can you help|can we chat)\b/.test(text)) {
+    return { text: 'I can help you browse the public home listings, learn about Whitepark 2 Estate, find the buying guide or viewing checklist, and reach Lewis. What would be useful?' };
+  }
+  if (/\b(nice to meet you|pleased to meet you|good to meet you)\b/.test(text)) {
+    return { text: 'Nice to meet you too! Are you looking for a home, or just exploring for now?' };
+  }
   if (/\bhow are you\b|\bhow’s it going\b|\bhow is it going\b|\bhow are things\b/.test(text)) {
     return { text: 'I’m doing well, thanks for asking! I’m here to help you explore homes and learn about Homes with Lew¥. What are you looking for today?' };
   }
@@ -64,7 +76,7 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [homes, setHomes] = useState(() => localProperties.filter(home => home.verified && home.published));
-  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi! I’m the Homes with Lew¥ site helper. Ask me about the site or a home. I’m automated; I can’t confirm live prices or availability.' }]);
+  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi! I’m LUMA, the Homes with Lew¥ site assistant. Ask me about the site or a home. I’m automated, so I can’t confirm live prices or availability.' }]);
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
@@ -98,7 +110,7 @@ export default function ChatWidget() {
 
   return <div className="chat-widget">
     {open && <section id="homes-chat" className="chat-panel" aria-label="Homes with Lew¥ site helper">
-      <header className="chat-header"><span className="chat-avatar" aria-hidden="true">LN</span><span className="chat-title"><strong>Homes with Lew¥</strong><small>Automated site helper</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
+      <header className="chat-header"><span className="chat-avatar" aria-hidden="true">LN</span><span className="chat-title"><strong>LUMA · Homes with Lew¥</strong><small>Automated site assistant</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
       <div className="chat-log" role="log" aria-live="polite" aria-relevant="additions text" ref={logRef}>
         {messages.map((message, index) => <article className={`chat-message ${message.from}`} key={`${index}-${message.from}`}><p>{message.text}</p>{message.links?.length > 0 && <div className="chat-actions">{message.links.map(link => <a key={link.href} href={link.href}>{link.label} ↗</a>)}</div>}</article>)}
         {busy && <p className="chat-thinking" role="status">Preparing a reply…</p>}
