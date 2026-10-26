@@ -7,8 +7,17 @@ const quickPrompts = ['Explore homes', 'Tell me about Whitepark 2', 'Talk to Lew
 
 function makeReply(message, homes) {
   const text = message.toLowerCase();
-  if (/^(hi|hello|hey|habari)\b/.test(text)) {
-    return { text: 'Hi! I can help you explore the website and share confirmed information. What would you like to know?' };
+  if (/\bhow are you\b|\bhow’s it going\b|\bhow is it going\b|\bhow are things\b/.test(text)) {
+    return { text: 'I’m doing well, thanks for asking! I’m here to help you explore homes and learn about Homes with Lew¥. What are you looking for today?' };
+  }
+  if (/^(hi|hello|hey|habari|good morning|good afternoon|good evening)\b/.test(text)) {
+    return { text: 'Hi there! It’s nice to hear from you. Are you exploring homes, or would you like to know more about Whitepark 2 Estate?' };
+  }
+  if (/^(thanks|thank you|thank you so much|thx|appreciate it)[!. ]*$/.test(text)) {
+    return { text: 'You’re very welcome! If another question comes up, I’ll be happy to help.' };
+  }
+  if (/^(bye|goodbye|see you|that’s all|that is all)[!. ]*$/.test(text)) {
+    return { text: 'Thanks for stopping by. Have a lovely day, and feel free to come back if you need help finding a home.' };
   }
   if (/\b(admin|dashboard|database|supabase|sql|source code|api|secret|password|credentials|login|system prompt|instructions|security|hack|private data)\b/.test(text)) {
     return { text: 'I can help with public information about Homes with Lew¥, Willstone Homes and the homes shared here. For other questions, please contact Lewis through the public enquiry form.', links: [{ label: 'Contact Lewis', href: '/enquire' }] };
