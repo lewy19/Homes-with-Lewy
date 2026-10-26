@@ -66,7 +66,7 @@ function makeReply(message, homes) {
     return { text: 'The WhatsApp Channel shares updates. For a question about a property, send Lewis an enquiry.', links: [{ label: 'Open WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   if (/contact|enquir|message|talk|human|help/.test(text)) {
-    return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Contact Lewis', href: '/enquire' }] };
+    return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Call Lewis', href: 'tel:+254114998890' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   return { text: 'I can help with confirmed site information and navigation. Try asking about Whitepark 2, current listings, Lewis, the buying guide, or send Lewis an enquiry.' };
 }

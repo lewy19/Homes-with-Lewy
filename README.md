@@ -54,6 +54,6 @@ Add the same public URL and anon key as deployment environment variables when pu
 
 ## Enquiries and contact details
 
-Enquiries contain a visitor’s name, email, optional phone, selected property and message. They are visible only to an authorized dashboard account. Review enquiries and remove records that are no longer needed. The WhatsApp Channel is for updates; add a direct contact method separately if buyers should message Lewis directly.
+Enquiries contain a visitor’s name, email, optional phone, selected property and message. They are visible only to an authorized dashboard account. Review enquiries and remove records that are no longer needed. Visitors can call Lewis at +254 114 998 890 using the site's tap-to-call link. The WhatsApp Channel is for updates.
 
 The homepage and Willstone Homes page include images from the “Mansionatte Photos” album Lewis shared, with the page gallery linking back to the source. The album is labeled as project imagery, not verified listings. The Willstone Homes page also includes selected images from the White Park 2 site-progress album, explicitly labeled as construction progress rather than homes currently for sale. White Park 2 image 4, which includes an unverified sign/contact number, is intentionally excluded.
