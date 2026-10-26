@@ -32,6 +32,9 @@ create table if not exists public.projects (
   location text not null,
   description text not null,
   home_type text,
+  maisonette_price numeric(14, 2) check (maisonette_price is null or maisonette_price >= 0),
+  bungalow_price numeric(14, 2) check (bungalow_price is null or bungalow_price >= 0),
+  plot_price numeric(14, 2) check (plot_price is null or plot_price >= 0),
   land_size text,
   features text[] not null default '{}',
   cover_image text,
@@ -39,6 +42,11 @@ create table if not exists public.projects (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.projects
+  add column if not exists maisonette_price numeric(14, 2) check (maisonette_price is null or maisonette_price >= 0),
+  add column if not exists bungalow_price numeric(14, 2) check (bungalow_price is null or bungalow_price >= 0),
+  add column if not exists plot_price numeric(14, 2) check (plot_price is null or plot_price >= 0);
 
 create table if not exists public.enquiries (
   id uuid primary key default gen_random_uuid(),
@@ -92,6 +100,17 @@ grant select on public.properties, public.projects, public.social_links to anon,
 revoke insert on public.enquiries from anon, authenticated;
 grant insert (name, email, phone, property_title, message) on public.enquiries to anon, authenticated;
 
+-- Policies are recreated so this setup script can be safely rerun.
+drop policy if exists "Admins can read their own admin record" on public.admin_users;
+drop policy if exists "Public can read verified published properties" on public.properties;
+drop policy if exists "Admins can manage properties" on public.properties;
+drop policy if exists "Public can read published projects" on public.projects;
+drop policy if exists "Admins can manage projects" on public.projects;
+drop policy if exists "Visitors can submit enquiries" on public.enquiries;
+drop policy if exists "Admins can manage enquiries" on public.enquiries;
+drop policy if exists "Public can read active social links" on public.social_links;
+drop policy if exists "Admins can manage social links" on public.social_links;
+
 create policy "Admins can read their own admin record"
   on public.admin_users for select to authenticated
   using (user_id = (select auth.uid()));
@@ -143,11 +162,50 @@ values (
 )
 on conflict (slug) do nothing;
 
+insert into public.projects (title, slug, location, description, home_type, maisonette_price, bungalow_price, published)
+values (
+  'Manna Residence',
+  'manna-residence',
+  '4 km from Ruiru town, along Ruiru-Githurai Road',
+  'A unique development blending elegant 4-bedroom maisonettes and bungalows, each featuring a DSQ.',
+  '4-bedroom maisonettes and bungalows, each with a DSQ',
+  20500000,
+  15500000,
+  true
+)
+on conflict (slug) do nothing;
+
+insert into public.projects (title, slug, location, description, home_type, bungalow_price, plot_price, published)
+values (
+  'Mangu Grove',
+  'mangu-grove',
+  'Along Thika Superhighway, off Exit 16, behind Zetech University',
+  'A premium residential development offering modern 3-bedroom bungalows with DSQ and 50-by-100 plots.',
+  'Modern 3-bedroom bungalows with DSQ and 50-by-100 plots',
+  13850000,
+  3950000,
+  true
+)
+on conflict (slug) do nothing;
+
+insert into public.projects (title, slug, location, description, home_type, plot_price, published)
+values (
+  'Juja Grove',
+  'juja-grove',
+  '3 km from Thika Superhighway, along Juja Farm',
+  'Prime residential plots for sale, strategically located 3 km from Thika Superhighway along Juja Farm.',
+  'Residential plots',
+  3750000,
+  true
+)
+on conflict (slug) do nothing;
+
 insert into public.social_links (platform, label, url, owner_scope, sort_order)
 values
   ('whatsapp', 'WhatsApp Channel', 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g', 'personal', 0),
-  ('facebook', 'Facebook', 'https://web.facebook.com/profile.php?id=61583083756453', 'personal', 1),
-  ('reddit', 'Reddit', 'https://www.reddit.com/user/Mission-Bluebird5874/', 'personal', 2),
+  ('instagram', 'Instagram', 'https://www.instagram.com/homeswithlewy/', 'personal', 1),
+  ('facebook', 'Facebook', 'https://web.facebook.com/profile.php?id=61583083756453', 'personal', 2),
+  ('reddit', 'Reddit', 'https://www.reddit.com/user/Mission-Bluebird5874/', 'personal', 3),
   ('facebook', 'Facebook', 'https://www.facebook.com/willstonehomes/', 'willstone', 0),
   ('instagram', 'Instagram', 'https://www.instagram.com/willstone_homes/reel/DB3ND7RohC1/', 'willstone', 1),
   ('tiktok', 'TikTok', 'https://www.tiktok.com/@willstone.homes', 'willstone', 2),

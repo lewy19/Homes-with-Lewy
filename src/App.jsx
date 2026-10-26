@@ -9,7 +9,8 @@ const routes = [
   ['/', 'Home'], ['/homes', 'Homes'], ['/about-lewis', 'About Lewis'],
   ['/enquire', 'Enquire'], ['/how-it-works', 'How it works'],
   ['/viewing-checklist', 'Viewing checklist'], ['/buying-guide', 'Home buying guide'],
-  ['/faqs', 'FAQs'], ['/willstone-homes', 'Willstone Homes'], ['/areas', 'Areas'],
+  ['/faqs', 'FAQs'], ['/willstone-homes', 'Willstone Homes'], ['/manna-residence', 'Manna Residence'],
+  ['/mangu-grove', 'Mangu Grove'], ['/juja-grove', 'Juja Grove'], ['/areas', 'Areas'],
   ['/privacy', 'Privacy'],
 ];
 const fallbackWhiteparkProject = {
@@ -20,6 +21,32 @@ const fallbackWhiteparkProject = {
   home_type: '3-bedroom bungalows with DSQ and cabro-paved driveways',
   land_size: '50-by-100 (unit not specified)',
   features: ['Own compound', 'Garden'],
+};
+const fallbackMannaProject = {
+  title: 'Manna Residence',
+  slug: 'manna-residence',
+  location: '4 km from Ruiru town, along Ruiru–Githurai Road',
+  description: 'A unique development blending elegant 4-bedroom maisonettes and bungalows, each featuring a DSQ.',
+  home_type: '4-bedroom maisonettes and bungalows, each with a DSQ',
+  maisonette_price: 20500000,
+  bungalow_price: 15500000,
+};
+const fallbackManguProject = {
+  title: 'Mangu Grove',
+  slug: 'mangu-grove',
+  location: 'Along Thika Superhighway, off Exit 16, behind Zetech University',
+  description: 'A premium residential development offering modern 3-bedroom bungalows with DSQ and 50-by-100 plots.',
+  home_type: 'Modern 3-bedroom bungalows with DSQ and 50-by-100 plots',
+  bungalow_price: 13850000,
+  plot_price: 3950000,
+};
+const fallbackJujaProject = {
+  title: 'Juja Grove',
+  slug: 'juja-grove',
+  location: '3 km from Thika Superhighway, along Juja Farm',
+  description: 'Prime residential plots for sale, strategically located 3 km from Thika Superhighway along Juja Farm.',
+  home_type: 'Residential plots',
+  plot_price: 3750000,
 };
 
 function useVerifiedHomes() {
@@ -46,6 +73,45 @@ function useWhiteparkProject() {
     return () => { active = false; };
   }, []);
   return isSupabaseConfigured ? project : project || fallbackWhiteparkProject;
+}
+
+function useMannaProject() {
+  const [project, setProject] = useState(fallbackMannaProject);
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('projects').select('*').eq('slug', 'manna-residence').eq('published', true).maybeSingle().then(({ data, error }) => {
+      if (active && !error) setProject(data || fallbackMannaProject);
+    });
+    return () => { active = false; };
+  }, []);
+  return project;
+}
+
+function useManguProject() {
+  const [project, setProject] = useState(fallbackManguProject);
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('projects').select('*').eq('slug', 'mangu-grove').eq('published', true).maybeSingle().then(({ data, error }) => {
+      if (active && !error) setProject(data || fallbackManguProject);
+    });
+    return () => { active = false; };
+  }, []);
+  return project;
+}
+
+function useJujaProject() {
+  const [project, setProject] = useState(fallbackJujaProject);
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('projects').select('*').eq('slug', 'juja-grove').eq('published', true).maybeSingle().then(({ data, error }) => {
+      if (active && !error) setProject(data || fallbackJujaProject);
+    });
+    return () => { active = false; };
+  }, []);
+  return project;
 }
 
 function usePageMeta(title, description) {
@@ -78,8 +144,9 @@ function Footer() {
     return () => { active = false; };
   }, []);
   const personalFallbacks = [
-    { platform: 'facebook', label: 'Facebook', url: 'https://web.facebook.com/profile.php?id=61583083756453', owner_scope: 'personal', is_active: true, sort_order: 1 },
-    { platform: 'reddit', label: 'Reddit', url: 'https://www.reddit.com/user/Mission-Bluebird5874/', owner_scope: 'personal', is_active: true, sort_order: 2 },
+    { platform: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/homeswithlewy/', owner_scope: 'personal', is_active: true, sort_order: 1 },
+    { platform: 'facebook', label: 'Facebook', url: 'https://web.facebook.com/profile.php?id=61583083756453', owner_scope: 'personal', is_active: true, sort_order: 2 },
+    { platform: 'reddit', label: 'Reddit', url: 'https://www.reddit.com/user/Mission-Bluebird5874/', owner_scope: 'personal', is_active: true, sort_order: 3 },
   ];
   const personalRows = socialLinks?.filter(link => link.owner_scope === 'personal' && link.is_active);
   const personalLinks = socialLinks === null ? personalFallbacks : personalRows;
@@ -181,6 +248,24 @@ function MansionattePhoto() {
   return <section className="mansionatte-feature" aria-labelledby="mansionatte-title"><div className="mansionatte-copy"><Eyebrow>Shared photo album</Eyebrow><h2 id="mansionatte-title">Mansionatte<br/><em>photo gallery.</em></h2><p>Photos from the album Lewis shared, showing homes at different stages. They’re here as project imagery, not verified property listings. No price, location, or availability details have been provided.</p></div><div className="mansionatte-grid">{photos.map((alt, index) => <a className="progress-photo" key={index} href={mansionatteAlbumUrl} target="_blank" rel="noreferrer" aria-label={`Open the Mansionatte shared album, photo ${index + 1}`}><img src={`/images/mansionatte/mansionatte-${String(index + 1).padStart(2, '0')}.jpg`} alt={alt} loading="lazy"/><span className="photo-count">{String(index + 1).padStart(2, '0')}</span></a>)}</div><a className="text-link gallery-link" href={mansionatteAlbumUrl} target="_blank" rel="noreferrer">Open the shared Google Photos album <span aria-hidden="true">↗</span></a></section>;
 }
 
+function MannaResidenceFeature() {
+  const project = useMannaProject();
+  const formatKes = amount => amount == null || amount === '' ? 'Ask Lewis to confirm' : `KSh ${new Intl.NumberFormat('en-KE').format(amount)}`;
+  return <section className="estate-summary manna-residence-feature" aria-labelledby="manna-residence-title"><div><span className="estate-label">FEATURED DEVELOPMENT</span><h3 id="manna-residence-title"><a href="/manna-residence">{project.title}</a></h3><p>{project.description}</p></div><dl><div><dt>Home types</dt><dd>{project.home_type}</dd></div><div><dt>Maisonette price</dt><dd>{formatKes(project.maisonette_price)}</dd></div><div><dt>Bungalow price</dt><dd>{formatKes(project.bungalow_price)}</dd></div><div><dt>Location</dt><dd>{project.location}</dd></div><div><dt>Availability</dt><dd>Confirm current availability with Lewis or Willstone Homes.</dd></div></dl></section>;
+}
+
+function ManguGroveFeature() {
+  const project = useManguProject();
+  const formatKes = amount => amount == null || amount === '' ? 'Ask Lewis to confirm' : `KSh ${new Intl.NumberFormat('en-KE').format(amount)}`;
+  return <section className="estate-summary manna-residence-feature" aria-labelledby="mangu-grove-title"><div><span className="estate-label">FEATURED DEVELOPMENT</span><h3 id="mangu-grove-title"><a href="/mangu-grove">{project.title}</a></h3><p>{project.description}</p></div><dl><div><dt>Bungalow price</dt><dd>{formatKes(project.bungalow_price)}</dd></div><div><dt>50-by-100 plot price</dt><dd>{formatKes(project.plot_price)}</dd></div><div><dt>Location</dt><dd>{project.location}</dd></div><div><dt>Availability</dt><dd>Confirm current availability with Lewis or Willstone Homes.</dd></div></dl></section>;
+}
+
+function JujaGroveFeature() {
+  const project = useJujaProject();
+  const formatKes = amount => amount == null || amount === '' ? 'Ask Lewis to confirm' : `KSh ${new Intl.NumberFormat('en-KE').format(amount)}`;
+  return <section className="estate-summary manna-residence-feature" aria-labelledby="juja-grove-title"><div><span className="estate-label">FEATURED DEVELOPMENT</span><h3 id="juja-grove-title"><a href="/juja-grove">{project.title}</a></h3><p>{project.description}</p></div><dl><div><dt>Plot price</dt><dd>{formatKes(project.plot_price)}</dd></div><div><dt>Location</dt><dd>{project.location}</dd></div><div><dt>Plot size</dt><dd>Ask Lewis or Willstone Homes to confirm.</dd></div><div><dt>Availability</dt><dd>Confirm current availability with Lewis or Willstone Homes.</dd></div></dl></section>;
+}
+
 function PageIntro({ eyebrow, title, lead }) { return <div className="page-intro"><Eyebrow>{eyebrow}</Eyebrow><h1>{title}</h1>{lead && <p>{lead}</p>}</div>; }
 function ContentPage({ eyebrow, title, lead, children }) { return <main className="content-main"><PageIntro eyebrow={eyebrow} title={title} lead={lead}/><div className="content-body">{children}</div></main>; }
 
@@ -218,7 +303,22 @@ function FAQPage() {
 
 function WillstonePage() {
   usePageMeta('Willstone Homes', 'Information about Lewis Njuguna’s connection with Willstone Homes and where verified listings appear.');
-  return <ContentPage eyebrow="Property listings" title={<>Shared with <em>Willstone Homes.</em></>} lead="Lewis Njuguna promotes and sells homes for Willstone Homes. This page is a personal site for sharing listings and receiving enquiries."><div className="article-copy"><h2>What you’ll find here</h2><p>Homes with Lew¥ is Lewis’s personal property page. Listings are displayed only after their details are verified with Willstone Homes and can be confirmed directly before you make a decision.</p><h2>Company details</h2><p>Official company description, website and contact information have not been provided for this page yet. Add only details confirmed and approved by Willstone Homes.</p><div className="notice-box"><strong>Clear roles</strong><p>Lewis also works in IT support. This site does not describe him as a licensed real estate agent or broker.</p></div><ButtonLink href="/homes">View current listings</ButtonLink></div><MansionattePhoto/><ProgressGallery/></ContentPage>;
+  return <ContentPage eyebrow="Property listings" title={<>Shared with <em>Willstone Homes.</em></>} lead="Lewis Njuguna promotes and sells homes for Willstone Homes. This page is a personal site for sharing listings and receiving enquiries."><div className="article-copy"><h2>What you’ll find here</h2><p>Homes with Lew¥ is Lewis’s personal property page. Listings are displayed only after their details are verified with Willstone Homes and can be confirmed directly before you make a decision.</p><h2>Company details</h2><p>Official company description, website and contact information have not been provided for this page yet. Add only details confirmed and approved by Willstone Homes.</p><div className="notice-box"><strong>Clear roles</strong><p>Lewis also works in IT support. This site does not describe him as a licensed real estate agent or broker.</p></div><ButtonLink href="/homes">View current listings</ButtonLink></div><MannaResidenceFeature/><ManguGroveFeature/><JujaGroveFeature/><MansionattePhoto/><ProgressGallery/></ContentPage>;
+}
+
+function MannaResidencePage() {
+  usePageMeta('Manna Residence', 'Information and shared prices for Manna Residence, 4-bedroom maisonettes and bungalows in Ruiru.');
+  return <ContentPage eyebrow="Development · Ruiru" title={<>Manna <em>Residence.</em></>} lead="A development with 4-bedroom maisonettes and bungalows, each featuring a DSQ, located 4 km from Ruiru town along Ruiru–Githurai Road."><MannaResidenceFeature/><p className="page-outro"><ButtonLink href="/enquire?property=Manna%20Residence">Enquire about Manna Residence</ButtonLink></p></ContentPage>;
+}
+
+function ManguGrovePage() {
+  usePageMeta('Mangu Grove', 'Information and shared prices for Mangu Grove bungalows and residential plots.');
+  return <ContentPage eyebrow="Development · Thika Superhighway" title={<>Mangu <em>Grove.</em></>} lead="A premium residential development along Thika Superhighway, off Exit 16, behind Zetech University."><ManguGroveFeature/><p className="page-outro"><ButtonLink href="/enquire?property=Mangu%20Grove">Enquire about Mangu Grove</ButtonLink></p></ContentPage>;
+}
+
+function JujaGrovePage() {
+  usePageMeta('Juja Grove', 'Information and shared plot price for Juja Grove residential plots along Juja Farm.');
+  return <ContentPage eyebrow="Development · Juja Farm" title={<>Juja <em>Grove.</em></>} lead="Prime residential plots located 3 km from Thika Superhighway along Juja Farm."><JujaGroveFeature/><p className="page-outro"><ButtonLink href="/enquire?property=Juja%20Grove">Enquire about Juja Grove</ButtonLink></p></ContentPage>;
 }
 
 function AreasPage() {
@@ -261,7 +361,7 @@ function EnquiryPage() {
       setStatus({ type: 'error', text: 'We could not send your enquiry. Please try again later.' });
     } finally { setLoading(false); }
   }
-  return <ContentPage eyebrow="Start a conversation" title={<>The right home starts<br/>with <em>a hello.</em></>} lead={supabase ? 'Tell Lewis a little about what you’re looking for. Your enquiry will be stored in the owner dashboard.' : 'Tell Lewis a little about what you’re looking for. Online enquiries are not connected yet.'}><form className="enquiry-form" onSubmit={submit} noValidate><div className="form-top"><span>YOUR ENQUIRY</span><span className="required-legend"><i>*</i> Required</span></div><div className="form-row"><Field label="Your name" name="name" value={form.name} onChange={update} error={errors.name} required autoComplete="name" placeholder="Your name"/><Field label="Email address" name="email" type="email" value={form.email} onChange={update} error={errors.email} required autoComplete="email" placeholder="you@example.com"/></div><Field label="Phone number" name="phone" type="tel" value={form.phone} onChange={update} error={errors.phone} autoComplete="tel" placeholder="Your preferred number" optional/><div className="field"><label htmlFor="property">Property of interest <span className="optional">(optional)</span></label><select id="property" name="property" value={form.property} onChange={update}><option value="">General enquiry</option>{verifiedHomes.map(home => <option key={home.title} value={home.title}>{home.title} — {home.location}</option>)}</select></div><div className="field"><label htmlFor="message">What are you looking for? <i>*</i></label><textarea id="message" name="message" rows="4" minLength="10" required value={form.message} onChange={update} placeholder="Tell Lewis what matters to you in a home…" aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined}/>{errors.message && <span className="field-error" id="message-error">{errors.message}</span>}</div><p className="form-privacy">{supabase ? 'Your enquiry is stored in Supabase and visible only to an authorized site administrator.' : 'Your details are not sent or saved until the enquiry service is connected.'}</p>{status.text && <div className="form-status" data-state={status.type} role="status" aria-live="polite">{status.text}</div>}<button className="button button-dark submit-button" type="submit" disabled={loading || !supabase}>{loading ? 'Sending your enquiry…' : supabase ? 'Send enquiry' : 'Enquiries not connected'} {supabase && !loading && <span aria-hidden="true">↗</span>}</button></form><p className="page-outro">Contact Lewis directly: <a href="tel:+254114998890">call +254 114 998 890</a> or <a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">message on WhatsApp</a>. The WhatsApp Channel is for updates.</p></ContentPage>;
+  return <ContentPage eyebrow="Start a conversation" title={<>The right home starts<br/>with <em>a hello.</em></>} lead={supabase ? 'Tell Lewis a little about what you’re looking for. Your enquiry will be stored in the owner dashboard.' : 'Tell Lewis a little about what you’re looking for. Online enquiries are not connected yet.'}><form className="enquiry-form" onSubmit={submit} noValidate><div className="form-top"><span>YOUR ENQUIRY</span><span className="required-legend"><i>*</i> Required</span></div><div className="form-row"><Field label="Your name" name="name" value={form.name} onChange={update} error={errors.name} required autoComplete="name" placeholder="Your name"/><Field label="Email address" name="email" type="email" value={form.email} onChange={update} error={errors.email} required autoComplete="email" placeholder="you@example.com"/></div><Field label="Phone number" name="phone" type="tel" value={form.phone} onChange={update} error={errors.phone} autoComplete="tel" placeholder="Your preferred number" optional/><div className="field"><label htmlFor="property">Property of interest <span className="optional">(optional)</span></label><select id="property" name="property" value={form.property} onChange={update}><option value="">General enquiry</option><option value="Manna Residence">Manna Residence — Ruiru</option><option value="Mangu Grove">Mangu Grove — Thika Superhighway</option><option value="Juja Grove">Juja Grove — Juja Farm</option>{verifiedHomes.map(home => <option key={home.title} value={home.title}>{home.title} — {home.location}</option>)}</select></div><div className="field"><label htmlFor="message">What are you looking for? <i>*</i></label><textarea id="message" name="message" rows="4" minLength="10" required value={form.message} onChange={update} placeholder="Tell Lewis what matters to you in a home…" aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined}/>{errors.message && <span className="field-error" id="message-error">{errors.message}</span>}</div><p className="form-privacy">{supabase ? 'Your enquiry is stored in Supabase and visible only to an authorized site administrator.' : 'Your details are not sent or saved until the enquiry service is connected.'}</p>{status.text && <div className="form-status" data-state={status.type} role="status" aria-live="polite">{status.text}</div>}<button className="button button-dark submit-button" type="submit" disabled={loading || !supabase}>{loading ? 'Sending your enquiry…' : supabase ? 'Send enquiry' : 'Enquiries not connected'} {supabase && !loading && <span aria-hidden="true">↗</span>}</button></form><p className="page-outro">Contact Lewis directly: <a href="tel:+254114998890">call +254 114 998 890</a> or <a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">message on WhatsApp</a>. The WhatsApp Channel is for updates.</p></ContentPage>;
 }
 
 function Field({ label, name, value, onChange, error, required, optional, ...props }) {
@@ -271,7 +371,9 @@ function Field({ label, name, value, onChange, error, required, optional, ...pro
 const pageComponents = {
   '/': HomePage, '/homes': HomesPage, '/about-lewis': AboutPage, '/enquire': EnquiryPage,
   '/how-it-works': HowPage, '/viewing-checklist': ChecklistPage, '/buying-guide': GuidePage,
-  '/faqs': FAQPage, '/willstone-homes': WillstonePage, '/areas': AreasPage, '/privacy': PrivacyPage,
+  '/faqs': FAQPage, '/willstone-homes': WillstonePage,
+  '/manna-residence': MannaResidencePage, '/mangu-grove': ManguGrovePage, '/juja-grove': JujaGrovePage,
+  '/areas': AreasPage, '/privacy': PrivacyPage,
 };
 
 function NotFound() {

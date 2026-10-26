@@ -3,7 +3,7 @@ import { properties as localProperties } from './data/properties.js';
 import { supabase } from './lib/supabase.js';
 import './chat-widget.css';
 
-const quickPrompts = ['Explore homes', 'Tell me about Whitepark 2', 'Talk to Lewis'];
+const quickPrompts = ['Explore homes', 'Tell me about Mangu Grove', 'Talk to Lewis'];
 
 function makeReply(message, homes) {
   const text = message.toLowerCase();
@@ -36,6 +36,24 @@ function makeReply(message, homes) {
   }
   if (/social|instagram|facebook|reddit|tiktok|youtube|follow/.test(text)) {
     return { text: 'You can find the public Homes with Lew¥ and Willstone Homes social links in the website footer. The WhatsApp Channel shares updates. You can message Lewis directly on WhatsApp or send a site enquiry.', links: [{ label: 'Message Lewis on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'WhatsApp Channel', href: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' }, { label: 'Send an enquiry', href: '/enquire' }] };
+  }
+  if (/juja grove|juja farm/.test(text)) {
+    return {
+      text: 'Juja Grove is described as prime residential plots located 3 km from Thika Superhighway along Juja Farm. The price shared is KSh 3.75 million per plot. Plot size and current availability should be confirmed with Lewis or Willstone Homes.',
+      links: [{ label: 'Ask about Juja Grove', href: '/enquire?property=Juja%20Grove' }],
+    };
+  }
+  if (/mangu|thika|zetech|exit 16/.test(text)) {
+    return {
+      text: 'Mangu Grove is described as a premium development with modern 3-bedroom bungalows with DSQ and 50-by-100 plots. It is along Thika Superhighway, off Exit 16, behind Zetech University. The prices shared are KSh 13.85 million for a bungalow and KSh 3.95 million for a plot. Confirm current pricing and availability with Lewis or Willstone Homes.',
+      links: [{ label: 'Ask about Mangu Grove', href: '/enquire?property=Mangu%20Grove' }],
+    };
+  }
+  if (/manna|ruiru|githurai|maisonette/.test(text)) {
+    return {
+      text: 'Manna Residence is described as a development with 4-bedroom maisonettes and bungalows, each featuring a DSQ, located 4 km from Ruiru town along Ruiru–Githurai Road. The prices shared are KSh 20.5 million for a maisonette and KSh 15.5 million for a bungalow. Please confirm current pricing and availability with Lewis or Willstone Homes.',
+      links: [{ label: 'Ask about Manna Residence', href: '/enquire?property=Manna%20Residence' }],
+    };
   }
   if (/white ?park|joska|bungalow|dsq|driveway|garden|compound/.test(text)) {
     return {
