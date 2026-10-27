@@ -325,8 +325,14 @@ function JujaGrovePage() {
 }
 
 function AreasPage() {
-  usePageMeta('Areas', 'See location information for verified Willstone Homes properties once listings have been added.');
-  return <ContentPage eyebrow="Location matters" title={<>Find your place, in the right <em>area.</em></>} lead="Location details will appear alongside each verified Willstone Homes listing."><div className="empty-listings area-empty"><span className="empty-icon" aria-hidden="true">✳</span><h3>Area information is coming soon.</h3><p>No verified property locations have been added yet. Once confirmed listings are available, you’ll be able to explore their locations here.</p><ButtonLink href="/homes">Browse verified homes</ButtonLink></div><p className="page-outro">Have a location in mind? <a className="inline-link" href="/enquire">Share it with Lewis ↗</a></p></ContentPage>;
+  usePageMeta('Development locations', 'Explore Manna Residence near Ruiru, Mangu Grove behind Zetech University, Juja Grove along Juja Farm, and Whitepark 2 Estate in Joska.');
+  const developments = [
+    ['Manna Residence', '4 km from Ruiru town, along Ruiru–Githurai Road', '/manna-residence'],
+    ['Mangu Grove', 'Thika Superhighway, off Exit 16, behind Zetech University', '/mangu-grove'],
+    ['Juja Grove', '3 km from Thika Superhighway, along Juja Farm', '/juja-grove'],
+    ['Whitepark 2 Estate', 'Joska, along Kangundo Road near the Greater Eastern Bypass', '/willstone-homes#white-park-2'],
+  ];
+  return <ContentPage eyebrow="Location matters" title={<>Developments around <em>Ruiru, Juja and Joska.</em></>} lead="Explore locations for developments Lewis shares for Willstone Homes. Confirm current details and availability directly."><div className="area-grid">{developments.map(([name, place, href]) => <a className="area-card" href={href} key={name}><span className="estate-label">DEVELOPMENT</span><h2>{name}</h2><p>{place}</p><span className="text-link">View details <span aria-hidden="true">↗</span></span></a>)}</div><p className="page-outro">Have another location in mind? <a className="inline-link" href="/enquire">Ask Lewis about it ↗</a></p></ContentPage>;
 }
 
 function PrivacyPage() {
