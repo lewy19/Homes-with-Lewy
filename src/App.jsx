@@ -117,9 +117,12 @@ function useJujaProject() {
 function usePageMeta(title, description) {
   useEffect(() => {
     document.title = `${title} | Homes with Lew¥`;
+    const canonicalUrl = `https://homes-with-lewy.vercel.app${window.location.pathname}`;
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${title} | Homes with Lew¥`);
     document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonicalUrl);
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonicalUrl);
   }, [title, description]);
 }
 

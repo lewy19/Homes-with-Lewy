@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+
+Sitemap: https://homes-with-lewy.vercel.app/sitemap.xml
