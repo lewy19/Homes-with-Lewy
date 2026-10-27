@@ -7,8 +7,8 @@ import { createServer } from 'vite';
 const site = 'https://homes-with-lewy.vercel.app';
 const pages = {
   '/': {
-    title: 'Lewis Njuguna Property Portfolio | Homes with Lew¥',
-    description: 'Explore homes and residential developments in Kenya shared by Lewis Njuguna, an IT support professional who also promotes and sells homes for Willstone Homes. See Manna Residence, Mangu Grove, Juja Grove and Whitepark 2 Estate.',
+    title: 'Homes with Lewy | Lewis Njuguna Property Portfolio in Kenya',
+    description: 'Homes with Lewy is Lewis Njuguna’s property portfolio for homes and residential developments in Kenya. Lewis works in IT support and also promotes and sells homes for Willstone Homes. Explore Manna Residence, Mangu Grove, Juja Grove and Whitepark 2 Estate.',
   },
   '/homes': {
     title: 'Homes | Homes with Lew¥',
