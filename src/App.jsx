@@ -154,7 +154,10 @@ function Footer() {
     { platform: 'tiktok', label: 'TikTok', url: 'https://www.tiktok.com/@homeswithlewy', owner_scope: 'personal', is_active: true, sort_order: 4 },
   ];
   const personalRows = socialLinks?.filter(link => link.owner_scope === 'personal' && link.is_active);
-  const personalLinks = socialLinks === null ? personalFallbacks : personalRows;
+  const personalLinks = socialLinks === null ? personalFallbacks : [
+    ...personalRows,
+    ...personalFallbacks.filter(link => link.platform === 'tiktok' && !socialLinks.some(row => row.owner_scope === 'personal' && row.platform === 'tiktok')),
+  ];
   const companyLinks = socialLinks?.filter(link => link.owner_scope === 'willstone' && link.is_active);
   const personalPlatforms = ['instagram', 'facebook', 'reddit', 'tiktok', 'youtube'];
   const officialFallback = [
