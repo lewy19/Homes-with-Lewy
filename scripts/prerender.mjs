@@ -93,8 +93,27 @@ try {
     await writeFile(output, html);
   }
 
+  // Give the client-rendered dashboard a real static entry point without
+  // rewriting every unknown URL back to the homepage.
+  globalThis.window = { location: { pathname: '/admin', search: '' } };
+  const adminMarkup = renderToString(createElement(App));
+  await mkdir('dist/admin', { recursive: true });
+  await writeFile('dist/admin/index.html', shell.replace('<div id="root"></div>', `<div id="root">${adminMarkup}</div>`));
+
+  // Vercel serves this file with HTTP 404 for paths that do not match a page.
+  globalThis.window = { location: { pathname: '/__homes_with_lewy_not_found__', search: '' } };
+  const notFoundMarkup = renderToString(createElement(App));
+  const notFoundHtml = shell
+    .replace('<div id="root"></div>', `<div id="root">${notFoundMarkup}</div>`)
+    .replace(/<title>[\s\S]*?<\/title>/, '<title>Page not found | Homes with Lew¥</title>')
+    .replace(/<meta name="description" content="[^"]*"\s*\/>/, '<meta name="description" content="That page could not be found. Return home or browse homes on Homes with Lew¥." />')
+    .replace(/\s*<meta property="og:url"[^>]*\/>/, '')
+    .replace(/\s*<link rel="canonical"[^>]*\/>/, '')
+    .replace('</head>', '    <meta name="robots" content="noindex, nofollow" />\n  </head>');
+  await writeFile('dist/404.html', notFoundHtml);
+
   globalThis.window = oldWindow;
-  console.log(`Prerendered ${Object.keys(pages).length} public pages.`);
+  console.log(`Prerendered ${Object.keys(pages).length} public pages, the owner dashboard, and a custom 404 page.`);
 } finally {
   await server.close();
 }
