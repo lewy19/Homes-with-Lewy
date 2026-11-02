@@ -107,6 +107,8 @@ try {
     .replace('<div id="root"></div>', `<div id="root">${notFoundMarkup}</div>`)
     .replace(/<title>[\s\S]*?<\/title>/, '<title>Page not found | Homes with Lew¥</title>')
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, '<meta name="description" content="That page could not be found. Return home or browse homes on Homes with Lew¥." />')
+    .replace(/<meta property="og:title" content="[^"]*"\s*\/>/, '<meta property="og:title" content="Page not found | Homes with Lew¥" />')
+    .replace(/<meta property="og:description" content="[^"]*"\s*\/>/, '<meta property="og:description" content="That page could not be found. Return home or browse homes on Homes with Lew¥." />')
     .replace(/\s*<meta property="og:url"[^>]*\/>/, '')
     .replace(/\s*<link rel="canonical"[^>]*\/>/, '')
     .replace('</head>', '    <meta name="robots" content="noindex, nofollow" />\n  </head>');
