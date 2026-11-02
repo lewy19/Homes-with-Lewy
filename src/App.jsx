@@ -151,6 +151,7 @@ function Footer() {
     { platform: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/homeswithlewy/', owner_scope: 'personal', is_active: true, sort_order: 1 },
     { platform: 'facebook', label: 'Facebook', url: 'https://web.facebook.com/profile.php?id=61583083756453', owner_scope: 'personal', is_active: true, sort_order: 2 },
     { platform: 'reddit', label: 'Reddit', url: 'https://www.reddit.com/user/Mission-Bluebird5874/', owner_scope: 'personal', is_active: true, sort_order: 3 },
+    { platform: 'tiktok', label: 'TikTok', url: 'https://www.tiktok.com/@homeswithlewy', owner_scope: 'personal', is_active: true, sort_order: 4 },
   ];
   const personalRows = socialLinks?.filter(link => link.owner_scope === 'personal' && link.is_active);
   const personalLinks = socialLinks === null ? personalFallbacks : personalRows;

@@ -206,6 +206,7 @@ values
   ('instagram', 'Instagram', 'https://www.instagram.com/homeswithlewy/', 'personal', 1),
   ('facebook', 'Facebook', 'https://web.facebook.com/profile.php?id=61583083756453', 'personal', 2),
   ('reddit', 'Reddit', 'https://www.reddit.com/user/Mission-Bluebird5874/', 'personal', 3),
+  ('tiktok', 'TikTok', 'https://www.tiktok.com/@homeswithlewy', 'personal', 4),
   ('facebook', 'Facebook', 'https://www.facebook.com/willstonehomes/', 'willstone', 0),
   ('instagram', 'Instagram', 'https://www.instagram.com/willstone_homes/reel/DB3ND7RohC1/', 'willstone', 1),
   ('tiktok', 'TikTok', 'https://www.tiktok.com/@willstone.homes', 'willstone', 2),
