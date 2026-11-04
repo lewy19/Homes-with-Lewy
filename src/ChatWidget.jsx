@@ -3,7 +3,7 @@ import { properties as localProperties } from './data/properties.js';
 import { supabase } from './lib/supabase.js';
 import './chat-widget.css';
 
-const quickPrompts = ['Explore homes', 'Tell me about Mangu Grove', 'Talk to Lewis'];
+const quickPrompts = ['Browse developments', 'Compare options', 'Buying guide', 'Talk to Lewis'];
 
 function makeReply(message, homes) {
   const text = message.toLowerCase();
@@ -86,6 +86,9 @@ function makeReply(message, homes) {
   if (/contact|enquir|message|talk|human|help/.test(text)) {
     return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Call Lewis', href: 'tel:+254114998890' }, { label: 'Message on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
+  if (/compare|difference|browse developments|all developments/.test(text)) {
+    return { text: 'Sure. I can help compare Manna Residence, Mangu Grove, Juja Grove and Whitepark 2 using the details published on this site. Which two would you like to look at? I’ll point out anything that needs confirmation.', links: [{ label: 'Manna Residence', href: '/manna-residence' }, { label: 'Mangu Grove', href: '/mangu-grove' }, { label: 'Juja Grove', href: '/juja-grove' }, { label: 'Whitepark 2', href: '/willstone-homes#white-park-2' }] };
+  }
   return { text: "I can't reach my conversation service just now. I can still help with basic questions about the developments, the buying guide, or how to contact Lewis." };
 }
 
@@ -94,7 +97,7 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [homes, setHomes] = useState(() => localProperties.filter(home => home.verified && home.published));
-  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi! I am LUMA, the Homes with Lew¥ site assistant. I can chat about the developments and home-buying process, or just have some small talk. I only use public site information, so Lewis or Willstone Homes should confirm current prices and availability.' }]);
+  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi, I’m LUMA, the automated Homes with Lew¥ assistant. I can help you browse developments, compare details shared on this site, find the buying guide, or reach Lewis. You can also ask me a question in your own words.' }]);
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
@@ -143,7 +146,7 @@ export default function ChatWidget() {
         {messages.map((message, index) => <article className={`chat-message ${message.from}`} key={`${index}-${message.from}`}><p>{message.text}</p>{message.links?.length > 0 && <div className="chat-actions">{message.links.map(link => <a key={link.href} href={link.href}>{link.label} ↗</a>)}</div>}</article>)}
         {busy && <p className="chat-thinking" role="status">Preparing a reply…</p>}
       </div>
-      {messages.length === 1 && <div className="chat-prompts" aria-label="Suggested questions">{quickPrompts.map(prompt => <button type="button" key={prompt} onClick={event => submit(event, prompt)}>{prompt}</button>)}</div>}
+      {messages.length === 1 && <div className="chat-prompts" aria-label="Quick starts"><span className="chat-prompts-label">Quick starts</span>{quickPrompts.map(prompt => <button type="button" key={prompt} onClick={event => submit(event, prompt)}>{prompt}<span aria-hidden="true"> ↗</span></button>)}</div>}
       <form className="chat-input-row" onSubmit={submit}><label className="visually-hidden" htmlFor="site-chat-input">Your message</label><input id="site-chat-input" ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder="Ask a question…" maxLength={500}/><button type="submit" disabled={!input.trim() || busy} aria-label="Send message">Send</button></form>
       <p className="chat-disclaimer">LUMA is automated. Your recent chat turns are sent to an AI service to generate replies; this site does not save chat history. Please do not share passwords, financial details or identity documents. Confirm property details with Willstone Homes.</p>
     </section>}
