@@ -141,7 +141,7 @@ export default function ChatWidget() {
 
   return <div className="chat-widget">
     {open && <section id="homes-chat" className="chat-panel" aria-label="Homes with Lew¥ site helper">
-      <header className="chat-header"><span className="chat-avatar" aria-hidden="true">LN</span><span className="chat-title"><strong>LUMA · Homes with Lew¥</strong><small>AI site assistant</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
+      <header className="chat-header"><img className="chat-avatar" src="/images/luma-avatar.jpeg" alt="LUMA avatar: a ginger cat wearing headphones"/><span className="chat-title"><strong>LUMA · Homes with Lew¥</strong><small>AI site assistant</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
       <div className="chat-log" role="log" aria-live="polite" aria-relevant="additions text" ref={logRef}>
         {messages.map((message, index) => <article className={`chat-message ${message.from}`} key={`${index}-${message.from}`}><p>{message.text}</p>{message.links?.length > 0 && <div className="chat-actions">{message.links.map(link => <a key={link.href} href={link.href}>{link.label} ↗</a>)}</div>}</article>)}
         {busy && <p className="chat-thinking" role="status">Preparing a reply…</p>}
