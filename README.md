@@ -46,9 +46,9 @@ To add Lewis’s Reddit profile to an existing database, run `supabase/add-reddi
 
 To add Lewis’s personal Facebook profile to an existing database, run `supabase/add-personal-facebook-social-link.sql` in the Supabase SQL Editor. It is separate from the Willstone Homes Facebook page.
 
-The floating site helper answers a small set of questions from confirmed public business information and links to relevant pages. It is a local scripted assistant, not a live AI or human chat; messages are not transmitted or stored. It does not provide internal dashboard, credential, database, or security information.
+LUMA can use a Supabase Edge Function and the OpenAI Responses API for natural-language replies, grounded only in published public projects, verified published listings, active social links and fixed public site information. The website does not store chat history; recent turns are sent to OpenAI for a reply. Without the function and its API secret configured, LUMA uses a small local scripted fallback. Do not use it for sensitive personal information or internal dashboard/security topics.
 
-The enquiry form writes to Supabase only when the project is configured and the schema has been applied. Before using the new qualification fields in an existing project, run `supabase/add-enquiry-qualification-fields.sql` in the SQL Editor. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
+The enquiry form writes to Supabase only when the project is configured and the schema has been applied. To enable AI chat, follow `supabase/LUMA-SETUP.md`. Before using the new qualification fields in an existing project, run `supabase/add-enquiry-qualification-fields.sql` in the SQL Editor. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
 
 Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by the RLS policies in `supabase/schema.sql`.
 

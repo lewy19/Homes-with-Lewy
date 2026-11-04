@@ -86,7 +86,7 @@ function makeReply(message, homes) {
   if (/contact|enquir|message|talk|human|help/.test(text)) {
     return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Call Lewis', href: 'tel:+254114998890' }, { label: 'Message on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
-  return { text: 'I can help with confirmed site information and navigation. Try asking about Whitepark 2, current listings, Lewis, the buying guide, or send Lewis an enquiry.' };
+  return { text: "I can't reach my conversation service just now. I can still help with basic questions about the developments, the buying guide, or how to contact Lewis." };
 }
 
 export default function ChatWidget() {
@@ -94,7 +94,7 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [homes, setHomes] = useState(() => localProperties.filter(home => home.verified && home.published));
-  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi! I’m LUMA, the Homes with Lew¥ site assistant. Ask me about the site or a home. I’m automated, so I can’t confirm live prices or availability.' }]);
+  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi! I am LUMA, the Homes with Lew¥ site assistant. I can chat about the developments and home-buying process, or just have some small talk. I only use public site information, so Lewis or Willstone Homes should confirm current prices and availability.' }]);
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
@@ -113,29 +113,39 @@ export default function ChatWidget() {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' });
   }, [open, messages, busy]);
 
-  function submit(event, preset) {
+  async function submit(event, preset) {
     event?.preventDefault();
     const question = (preset || input).trim();
     if (!question || busy) return;
+    const recent = messages.filter(message => message.from === 'user' || message.from === 'bot').slice(-6);
+    const transcript = [...recent.map(message => ({ role: message.from === 'bot' ? 'assistant' : 'user', content: message.text })), { role: 'user', content: question }];
     setMessages(current => [...current, { from: 'user', text: question }]);
     setInput('');
     setBusy(true);
-    window.setTimeout(() => {
-      setMessages(current => [...current, { from: 'bot', ...makeReply(question, homes) }]);
+    try {
+      if (!supabase) throw new Error('Chat service is not configured');
+      const { data, error } = await supabase.functions.invoke('luma-chat', { body: { messages: transcript } });
+      if (error) throw error;
+      if (!data?.reply) throw new Error('Chat service returned no reply');
+      setMessages(current => [...current, { from: 'bot', text: data.reply }]);
+    } catch {
+      const fallback = makeReply(question, homes);
+      setMessages(current => [...current, { from: 'bot', ...fallback }]);
+    } finally {
       setBusy(false);
-    }, 350);
+    }
   }
 
   return <div className="chat-widget">
     {open && <section id="homes-chat" className="chat-panel" aria-label="Homes with Lew¥ site helper">
-      <header className="chat-header"><span className="chat-avatar" aria-hidden="true">LN</span><span className="chat-title"><strong>LUMA · Homes with Lew¥</strong><small>Automated site assistant</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
+      <header className="chat-header"><span className="chat-avatar" aria-hidden="true">LN</span><span className="chat-title"><strong>LUMA · Homes with Lew¥</strong><small>AI site assistant</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
       <div className="chat-log" role="log" aria-live="polite" aria-relevant="additions text" ref={logRef}>
         {messages.map((message, index) => <article className={`chat-message ${message.from}`} key={`${index}-${message.from}`}><p>{message.text}</p>{message.links?.length > 0 && <div className="chat-actions">{message.links.map(link => <a key={link.href} href={link.href}>{link.label} ↗</a>)}</div>}</article>)}
         {busy && <p className="chat-thinking" role="status">Preparing a reply…</p>}
       </div>
       {messages.length === 1 && <div className="chat-prompts" aria-label="Suggested questions">{quickPrompts.map(prompt => <button type="button" key={prompt} onClick={event => submit(event, prompt)}>{prompt}</button>)}</div>}
       <form className="chat-input-row" onSubmit={submit}><label className="visually-hidden" htmlFor="site-chat-input">Your message</label><input id="site-chat-input" ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder="Ask a question…" maxLength={500}/><button type="submit" disabled={!input.trim() || busy} aria-label="Send message">Send</button></form>
-      <p className="chat-disclaimer">Automated replies use site information. Messages stay in this browser and aren’t sent or saved. Confirm property details with Willstone Homes.</p>
+      <p className="chat-disclaimer">LUMA is automated. Your recent chat turns are sent to an AI service to generate replies; this site does not save chat history. Please do not share passwords, financial details or identity documents. Confirm property details with Willstone Homes.</p>
     </section>}
     <button className="chat-launcher" type="button" aria-expanded={open} aria-controls="homes-chat" onClick={() => setOpen(value => !value)}><span className="chat-launch-icon" aria-hidden="true">{open ? '×' : '✳'}</span><span>{open ? 'Close' : 'Ask us'}</span></button>
   </div>;

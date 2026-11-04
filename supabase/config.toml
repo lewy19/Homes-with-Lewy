@@ -1,2 +1,5 @@
 [functions.notify-enquiry]
 verify_jwt = false
+
+[functions.luma-chat]
+verify_jwt = false
