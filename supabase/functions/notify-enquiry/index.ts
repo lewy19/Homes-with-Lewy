@@ -32,6 +32,9 @@ Deno.serve(async request => {
     const phone = String(enquiry.phone ?? '').slice(0, 32);
     const property = String(enquiry.property_title ?? 'General enquiry').slice(0, 160);
     const message = String(enquiry.message ?? '').slice(0, 5000);
+    const budget = String(enquiry.budget_range ?? '').slice(0, 80);
+    const area = String(enquiry.preferred_area ?? '').slice(0, 120);
+    const timeline = String(enquiry.timeline ?? '').slice(0, 80);
     if (!name || !email || !message) return new Response('Invalid enquiry record', { status: 400 });
 
     const html = `<h2>New Homes with Lew¥ enquiry</h2>
@@ -39,8 +42,11 @@ Deno.serve(async request => {
       <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
       <p><strong>Phone:</strong> ${escapeHtml(phone || 'Not provided')}</p>
       <p><strong>Home:</strong> ${escapeHtml(property)}</p>
+      <p><strong>Budget:</strong> ${escapeHtml(budget || 'Not provided')}</p>
+      <p><strong>Preferred area:</strong> ${escapeHtml(area || 'Not provided')}</p>
+      <p><strong>Timing:</strong> ${escapeHtml(timeline || 'Not provided')}</p>
       <p><strong>Message:</strong></p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`;
-    const text = `New Homes with Lew¥ enquiry\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nHome: ${property}\n\n${message}`;
+    const text = `New Homes with Lew¥ enquiry\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nHome: ${property}\nBudget: ${budget || 'Not provided'}\nPreferred area: ${area || 'Not provided'}\nTiming: ${timeline || 'Not provided'}\n\n${message}`;
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',

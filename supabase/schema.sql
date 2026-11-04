@@ -54,10 +54,18 @@ create table if not exists public.enquiries (
   email text not null check (char_length(trim(email)) between 5 and 254),
   phone text check (phone is null or char_length(trim(phone)) between 7 and 32),
   property_title text,
+  budget_range text check (budget_range is null or char_length(trim(budget_range)) <= 80),
+  preferred_area text check (preferred_area is null or char_length(trim(preferred_area)) <= 120),
+  timeline text check (timeline is null or char_length(trim(timeline)) <= 80),
   message text not null check (char_length(trim(message)) between 10 and 5000),
   status text not null default 'new' check (status in ('new', 'in_progress', 'resolved', 'spam')),
   created_at timestamptz not null default now()
 );
+
+alter table public.enquiries
+  add column if not exists budget_range text check (budget_range is null or char_length(trim(budget_range)) <= 80),
+  add column if not exists preferred_area text check (preferred_area is null or char_length(trim(preferred_area)) <= 120),
+  add column if not exists timeline text check (timeline is null or char_length(trim(timeline)) <= 80);
 
 create table if not exists public.social_links (
   id uuid primary key default gen_random_uuid(),
@@ -98,7 +106,7 @@ grant select, insert, update, delete on public.properties, public.projects, publ
 grant select, update, delete on public.enquiries to authenticated;
 grant select on public.properties, public.projects, public.social_links to anon, authenticated;
 revoke insert on public.enquiries from anon, authenticated;
-grant insert (name, email, phone, property_title, message) on public.enquiries to anon, authenticated;
+grant insert (name, email, phone, property_title, budget_range, preferred_area, timeline, message) on public.enquiries to anon, authenticated;
 
 -- Policies are recreated so this setup script can be safely rerun.
 drop policy if exists "Admins can read their own admin record" on public.admin_users;
@@ -136,6 +144,9 @@ create policy "Visitors can submit enquiries"
     and char_length(trim(name)) between 2 and 120
     and char_length(trim(email)) between 5 and 254
     and char_length(trim(message)) between 10 and 5000
+    and (budget_range is null or char_length(trim(budget_range)) <= 80)
+    and (preferred_area is null or char_length(trim(preferred_area)) <= 120)
+    and (timeline is null or char_length(trim(timeline)) <= 80)
   );
 create policy "Admins can manage enquiries"
   on public.enquiries for all to authenticated

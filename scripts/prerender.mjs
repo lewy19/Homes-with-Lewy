@@ -7,16 +7,16 @@ import { createServer } from 'vite';
 const site = 'https://homes-with-lewy.vercel.app';
 const pages = {
   '/': {
-    title: 'Homes with Lewy | Lewis Njuguna Property Portfolio in Kenya',
-    description: 'Homes with Lewy is Lewis Njuguna’s property portfolio for homes and residential developments in Kenya. Lewis works in IT support and also promotes and sells homes for Willstone Homes. Explore Manna Residence, Mangu Grove, Juja Grove and Whitepark 2 Estate.',
+    title: 'Homes with Lewy | Willstone Homes Developments in Kenya',
+    description: 'Explore Willstone Homes developments in Ruiru, Juja, Joska and along Thika Superhighway. Lewis Njuguna works in IT support and is authorized to promote and sell homes for Willstone Homes.',
   },
   '/homes': {
     title: 'Homes | Homes with Lew¥',
-    description: 'Browse Willstone Homes listings shared by Lewis Njuguna. Listing details are published after verification; confirm current availability directly.',
+    description: 'Explore Manna Residence near Ruiru, Mangu Grove behind Zetech University, Juja Grove along Juja Farm, and Whitepark 2 Estate in Joska. Ask about current details and availability.',
   },
   '/about-lewis': {
     title: 'About Lewis Njuguna | Homes with Lew¥',
-    description: 'Meet Lewis Njuguna, an IT support professional who also promotes and sells homes for Willstone Homes.',
+    description: 'Meet Lewis Njuguna, an IT support professional authorized by Willstone Homes to promote and sell its homes.',
   },
   '/enquire': {
     title: 'Enquire About a Home | Homes with Lew¥',
@@ -32,7 +32,7 @@ const pages = {
   },
   '/buying-guide': {
     title: 'Home Buying Guide | Homes with Lew¥',
-    description: 'A general guide to organising your home search and questions about property, financing and legal details.',
+    description: 'A Kenya home-buying checklist covering independent legal advice, official title searches, costs, written terms and handover questions.',
   },
   '/faqs': {
     title: 'Frequently Asked Questions | Homes with Lew¥',
@@ -85,6 +85,8 @@ try {
       .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${meta.description}" />`)
       .replace(/<meta property="og:title" content="[^"]*"\s*\/>/, `<meta property="og:title" content="${meta.title}" />`)
       .replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${meta.description}" />`)
+      .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${meta.title}" />`)
+      .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${meta.description}" />`)
       .replace(/<meta property="og:url" content="[^"]*"\s*\/>/, `<meta property="og:url" content="${canonical}" />`)
       .replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${canonical}" />`);
 
