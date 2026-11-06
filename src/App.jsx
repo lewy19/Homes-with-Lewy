@@ -261,6 +261,10 @@ const septemberAlbumUrl = 'https://photos.google.com/share/AF1QipNrA9C9w7D9D0hEb
 const whiteparkRenders = [
   ['whitepark-render-01.jpeg', 'Architectural visualisation of a proposed Whitepark 2 bungalow exterior, with a pitched roof, stone accents and landscaped lawn.'],
   ['whitepark-render-02.jpeg', 'Second architectural visualisation of a proposed Whitepark 2 bungalow exterior, showing the front entrance, pitched roof and driveway.'],
+  ['whitepark-render-living-room.jpeg', 'Architectural visualisation of a proposed Whitepark 2 living room with a light sofa, chandelier, and wood feature wall.'],
+  ['whitepark-render-dining-room.jpeg', 'Architectural visualisation of a proposed Whitepark 2 dining area beside an open kitchen.'],
+  ['whitepark-render-kitchen.jpeg', 'Architectural visualisation of a proposed Whitepark 2 kitchen with an island, light cabinetry, and built-in appliances.'],
+  ['whitepark-render-bathroom.jpeg', 'Architectural visualisation of a proposed Whitepark 2 bathroom with a walk-in shower and vanity.'],
 ];
 const progressPhotos = [
   ['progress-01.jpg', 'Aerial view over rows of unfinished masonry homes at White Park 2, with green fields in the distance.'],
