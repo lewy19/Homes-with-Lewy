@@ -36,6 +36,7 @@ create table if not exists public.projects (
   bungalow_price numeric(14, 2) check (bungalow_price is null or bungalow_price >= 0),
   plot_price numeric(14, 2) check (plot_price is null or plot_price >= 0),
   land_size text,
+  details_confirmed_on date,
   features text[] not null default '{}',
   cover_image text,
   published boolean not null default false,
@@ -46,7 +47,8 @@ create table if not exists public.projects (
 alter table public.projects
   add column if not exists maisonette_price numeric(14, 2) check (maisonette_price is null or maisonette_price >= 0),
   add column if not exists bungalow_price numeric(14, 2) check (bungalow_price is null or bungalow_price >= 0),
-  add column if not exists plot_price numeric(14, 2) check (plot_price is null or plot_price >= 0);
+  add column if not exists plot_price numeric(14, 2) check (plot_price is null or plot_price >= 0),
+  add column if not exists details_confirmed_on date;
 
 create table if not exists public.enquiries (
   id uuid primary key default gen_random_uuid(),
