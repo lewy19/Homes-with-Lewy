@@ -10,6 +10,10 @@ function Stars({ value, label }) {
   </span>;
 }
 
+function LockIcon() {
+  return <svg className="testimonial-lock-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M12 14v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>;
+}
+
 export default function TestimonialsPage() {
   const [session, setSession] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -110,7 +114,7 @@ export default function TestimonialsPage() {
     <section className="testimonial-submit" aria-labelledby="testimonial-submit-title">
       <div className="testimonial-submit-copy"><p className="eyebrow">Share your experience</p><h2 id="testimonial-submit-title">A few words can help someone <em>feel at home.</em></h2><p>You can browse this page and the rest of the website without an account. Google sign-in is only needed to submit feedback.</p></div>
       {!isSupabaseConfigured ? <div className="testimonial-signin"><p>Feedback submissions are not connected yet. You can still browse all public pages without signing in.</p></div>
-        : !session ? <div className="testimonial-signin"><p>Sign in with Google when you’re ready to write a review. Your feedback stays private until it’s approved.</p><button type="button" className="button button-dark" onClick={signIn} disabled={busy}>{busy ? 'Opening Google…' : 'Sign in to share feedback'} <span aria-hidden="true">↗</span></button></div>
+        : !session ? <div className="testimonial-signin"><div className="testimonial-access-label"><span className="testimonial-lock-wrap"><LockIcon/></span><span><strong>Private feedback access</strong><small>Sign-in is only needed to submit a review.</small></span></div><p>Sign in with Google when you’re ready to write a review. Your feedback stays private until it’s approved.</p><button type="button" className="button button-dark" onClick={signIn} disabled={busy}>{busy ? 'Opening Google…' : 'Sign in to share feedback'} <span aria-hidden="true">↗</span></button></div>
           : myReview ? <div className="testimonial-pending"><span aria-hidden="true">✓</span><div><strong>Feedback received</strong><p>{myReview.status === 'approved' ? 'Your feedback is published above.' : myReview.status === 'rejected' ? 'This submission was not published. Contact Lewis if you have a question.' : 'Your feedback is awaiting review. It is not public yet.'}</p></div><button type="button" className="testimonial-signout" onClick={() => supabase.auth.signOut()}>Sign out</button></div>
             : <form className="testimonial-form" onSubmit={submit}>
               <p className="testimonial-account">Signed in as <strong>{session.user.email}</strong></p>
