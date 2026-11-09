@@ -3,6 +3,7 @@ import path from 'node:path';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { createServer } from 'vite';
+import { projects as projectData } from '../src/data/projects.js';
 
 const site = 'https://homes-with-lewy.vercel.app';
 const pages = {
@@ -13,6 +14,10 @@ const pages = {
   '/homes': {
     title: 'Homes | Homes with Lew¥',
     description: 'Explore Manna Residence near Ruiru, Mangu Grove behind Zetech University, Juja Grove along Juja Farm, and Whitepark 2 Estate in Joska. Ask about current details and availability.',
+  },
+  '/projects': {
+    title: 'Projects and Developments | Homes with Lew¥',
+    description: 'Explore shared Willstone Homes development information in Joska, Ruiru, Mangu and Juja. Confirm current prices and availability directly with Lewis.',
   },
   '/about-lewis': {
     title: 'About Lewis Njuguna | Homes with Lew¥',
@@ -64,6 +69,17 @@ const pages = {
   },
 };
 
+for (const project of projectData) {
+  const meta = {
+    title: `${project.name} | Homes with Lew¥`,
+    description: project.seoDescription,
+    canonical: `${site}/projects/${project.slug}`,
+    ...(project.heroImage ? { ogImage: `${site}${project.heroImage.src}`, ogImageAlt: project.heroImage.alt } : {}),
+  };
+  pages[`/projects/${project.slug}`] = meta;
+  if (['manna-residence', 'mangu-grove', 'juja-grove'].includes(project.slug)) pages[`/${project.slug}`] = meta;
+}
+
 const server = await createServer({
   configFile: false,
   server: { middlewareMode: true },
@@ -78,7 +94,7 @@ try {
   for (const [route, meta] of Object.entries(pages)) {
     globalThis.window = { location: { pathname: route, search: '' } };
     const markup = renderToString(createElement(App));
-    const canonical = `${site}${route === '/' ? '/' : route}`;
+    const canonical = meta.canonical || `${site}${route === '/' ? '/' : route}`;
     const html = shell
       .replace('<div id="root"></div>', `<div id="root">${markup}</div>`)
       .replace(/<title>[\s\S]*?<\/title>/, `<title>${meta.title}</title>`)
@@ -87,6 +103,9 @@ try {
       .replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${meta.description}" />`)
       .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${meta.title}" />`)
       .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${meta.description}" />`)
+      .replace(/\s*<meta property="og:image"[^>]*\/>/, meta.ogImage ? `\n    <meta property="og:image" content="${meta.ogImage}" />` : '')
+      .replace(/\s*<meta property="og:image:alt"[^>]*\/>/, meta.ogImageAlt ? `\n    <meta property="og:image:alt" content="${meta.ogImageAlt}" />` : '')
+      .replace(/\s*<meta name="twitter:image"[^>]*\/>/, meta.ogImage ? `\n    <meta name="twitter:image" content="${meta.ogImage}" />` : '')
       .replace(/<meta property="og:url" content="[^"]*"\s*\/>/, `<meta property="og:url" content="${canonical}" />`)
       .replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${canonical}" />`);
 

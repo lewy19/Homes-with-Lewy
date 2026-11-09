@@ -1,8 +1,10 @@
-# Email alerts for website enquiries
+﻿# Email alerts for website enquiries
 
 The website continues saving each enquiry to `public.enquiries`. A Supabase Database Webhook can send an alert to both dashboard administrators (`lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`) after each successful insert. The Resend API key and webhook token stay in Supabase Edge Function secrets, never in the website or Vercel variables.
 
 ## One-time setup
+
+Before accepting enquiries with optional email and contact consent, run `supabase/add-enquiry-contact-consent.sql` in the Supabase SQL Editor. The notification function supports missing email and includes the stored consent in the alert.
 
 1. Create a Resend account, add and verify a sender domain, and create an API key. Resend requires a verified sender domain for production sending.
 2. In Supabase, open **Edge Functions → Secrets** and add these three secrets:

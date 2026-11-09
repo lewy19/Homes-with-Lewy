@@ -3,7 +3,7 @@ import { properties as localProperties } from './data/properties.js';
 import { supabase } from './lib/supabase.js';
 import './chat-widget.css';
 
-const quickPrompts = ['Browse developments', 'Compare options', 'Buying guide', 'Talk to Lewis'];
+const quickPrompts = ['Browse developments', 'Compare options', 'Buying guide', 'Request a follow-up'];
 
 function makeReply(message, homes) {
   const text = message.toLowerCase();
@@ -92,7 +92,7 @@ function makeReply(message, homes) {
   return { text: "I can't reach my conversation service just now. I can still help with basic questions about the developments, the buying guide, or how to contact Lewis." };
 }
 
-export default function ChatWidget() {
+export default function ChatWidget({ lifted = false }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -120,6 +120,13 @@ export default function ChatWidget() {
     event?.preventDefault();
     const question = (preset || input).trim();
     if (!question || busy) return;
+    if (question === 'Request a follow-up' || /\bfollow[ -]?up\b|\b(call|contact|message|speak|talk) me\b|\bshare my (contact|details)\b|\bspeak to Lewis\b/i.test(question)) {
+      setMessages(current => [...current,
+        { from: 'user', text: question },
+        { from: 'bot', text: 'Of course. Use the enquiry form to share your name, phone number, email address, and what you would like to know. LUMA does not collect or save those details in this chat.', links: [{ label: 'Open the enquiry form', href: '/enquire?source=luma' }] },
+      ]);
+      return;
+    }
     const recent = messages.filter(message => message.from === 'user' || message.from === 'bot').slice(-6);
     const transcript = [...recent.map(message => ({ role: message.from === 'bot' ? 'assistant' : 'user', content: message.text })), { role: 'user', content: question }];
     setMessages(current => [...current, { from: 'user', text: question }]);
@@ -139,7 +146,7 @@ export default function ChatWidget() {
     }
   }
 
-  return <div className="chat-widget">
+  return <div className={`chat-widget ${lifted ? 'chat-widget-lifted' : ''}`}>
     {open && <section id="homes-chat" className="chat-panel" aria-label="Homes with Lew¥ site helper">
       <header className="chat-header"><img className="chat-avatar" src="/images/luma-avatar.jpeg" alt="LUMA avatar: a ginger cat wearing headphones"/><span className="chat-title"><strong>LUMA · Homes with Lew¥</strong><small>AI site assistant</small></span><button className="chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close chat">×</button></header>
       <div className="chat-log" role="log" aria-live="polite" aria-relevant="additions text" ref={logRef}>
