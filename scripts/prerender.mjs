@@ -19,6 +19,10 @@ const pages = {
     title: 'Projects and Developments | Homes with Lew¥',
     description: 'Explore shared Willstone Homes development information in Joska, Ruiru, Mangu and Juja. Confirm current prices and availability directly with Lewis.',
   },
+  '/testimonials': {
+    title: 'Testimonials | Homes with Lew¥',
+    description: 'Read public feedback shared by visitors and submit your own experience. Feedback is reviewed before it appears.',
+  },
   '/about-lewis': {
     title: 'About Lewis Njuguna | Homes with Lew¥',
     description: 'Meet Lewis Njuguna, an IT support professional authorized by Willstone Homes to promote and sell its homes.',

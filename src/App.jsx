@@ -4,6 +4,7 @@ import { isSupabaseConfigured, supabase } from './lib/supabase.js';
 import ChatWidget from './ChatWidget.jsx';
 import { projects, projectBySlug } from './data/projects.js';
 import { ProjectsPage, ProjectDetailPage, ProjectCards } from './ProjectPages.jsx';
+import TestimonialsPage from './TestimonialsPage.jsx';
 
 const AdminPage = lazy(() => import('./AdminPage.jsx'));
 
@@ -13,7 +14,7 @@ const routes = [
   ['/viewing-checklist', 'Viewing checklist'], ['/buying-guide', 'Home buying guide'],
   ['/faqs', 'FAQs'], ['/willstone-homes', 'Willstone Homes'], ['/projects/manna-residence', 'Manna Residence'],
   ['/projects/mangu-grove', 'Mangu Grove'], ['/projects/juja-grove', 'Juja Grove'], ['/areas', 'Areas'],
-  ['/privacy', 'Privacy'], ['/projects', 'Projects'],
+  ['/privacy', 'Privacy'], ['/projects', 'Projects'], ['/testimonials', 'Testimonials'],
 ];
 function useVerifiedHomes() {
   const [homes, setHomes] = useState(() => properties.filter(home => home.verified === true));
@@ -116,7 +117,7 @@ function HomePage() {
     <section className="homes section-pad"><div className="section-heading"><div><Eyebrow>A good place to begin</Eyebrow><h2>Find your <em>somewhere.</em></h2></div><p className="section-aside">Explore developments shared by Lewis with Willstone Homes. Confirm current details and availability directly.</p></div><FeaturedDevelopments/><div className="center-link"><a className="text-link" href="/homes">View verified individual homes <span aria-hidden="true">↗</span></a></div></section>
     <ProgressTeaser/>
     <section className="about section-pad"><div className="about-image"><img src="/images/white-park-2/progress-02.jpg" alt="Row of unfinished masonry homes, some with completed roof tiles and one with exposed roof framing" loading="lazy"/><span className="about-image-label">A home is more than four walls.</span><span className="about-image-index">02 / A LITTLE ABOUT LEWIS</span></div><div className="about-copy"><Eyebrow>The person behind the page</Eyebrow><h2>A real person.<br/><em>A practical approach.</em></h2><p className="about-lead">I’m Lewis Njuguna — I work in IT support, and I am authorized by Willstone Homes to promote and sell its homes.</p><p className="about-body">I bring a problem-solving mindset and a straightforward approach to conversations about finding a home. This page shares development information and individually verified Willstone Homes listings, and makes it easier to ask questions.</p><RoleCard/><a className="text-link" href="/about-lewis">Get to know Lewis <span aria-hidden="true">↗</span></a></div></section>
-    <section className="home-cta section-pad"><Eyebrow>Start a conversation</Eyebrow><h2>The right home starts<br/>with <em>a hello.</em></h2><p>Tell Lewis a little about what you’re looking for.</p><ButtonLink href="/enquire">Make an enquiry</ButtonLink></section></main></>;
+    <section className="home-cta section-pad"><Eyebrow>Start a conversation</Eyebrow><h2>The right home starts<br/>with <em>a hello.</em></h2><p>Tell Lewis a little about what you’re looking for.</p><ButtonLink href="/enquire">Make an enquiry</ButtonLink><div className="center-link"><a className="text-link" href="/testimonials">Read or share an experience <span aria-hidden="true">↗</span></a></div></section></main></>;
 }
 
 function RoleCard() { return <div className="role-card"><span className="role-icon" aria-hidden="true">✳</span><span><strong>Two roles, one clear introduction.</strong><small>IT support professional · Authorized by Willstone Homes to promote and sell its homes</small></span></div>; }
@@ -175,7 +176,7 @@ function AreasPage() {
 function PrivacyPage() {
   usePageMeta('Privacy', 'How enquiry information is handled in this Homes with Lew¥ website preview.');
   const configuredNotice = isSupabaseConfigured ? 'Your enquiry is saved to the Homes with Lew¥ database and visible to an authorized site administrator through the private dashboard. Email alerts need separate setup and may not be active yet.' : 'Online enquiries are unavailable until Supabase is configured. Information entered here is not sent or saved.';
-  return <ContentPage eyebrow="Your information" title={<>A clear note about <em>privacy.</em></>} lead={configuredNotice}><div className="article-copy"><h2>Enquiry information</h2><p>{configuredNotice} Enquiries include your name, phone number, chosen property, message, explicit contact consent, and any optional email or preferences you provide.</p><h2>Website analytics</h2><p>This site uses Vercel Web Analytics to understand page visits and improve the site.</p><h2>LUMA chat</h2><p>If the AI chat is enabled, your latest messages are sent to the AI service so it can generate a reply. The website does not save chat history in its database. Do not enter passwords, identity documents, financial details or other sensitive information. To share contact details for a follow-up, use the enquiry form; LUMA does not collect those details inside chat.</p><h2>Access and handling</h2><p>Dashboard access is restricted to an account explicitly added to the site administrator list. Lewis should review enquiries and remove records that are no longer needed. Do not submit sensitive financial or identity information through this form.</p><h2>Questions</h2><p>Contact Lewis through a verified contact method listed on this website.</p></div></ContentPage>;
+  return <ContentPage eyebrow="Your information" title={<>A clear note about <em>privacy.</em></>} lead={configuredNotice}><div className="article-copy"><h2>Enquiry information</h2><p>{configuredNotice} Enquiries include your name, phone number, chosen property, message, explicit contact consent, and any optional email or preferences you provide.</p><h2>Testimonials</h2><p>If you choose to submit feedback, Google sign-in is used to limit spam and prevent multiple reviews from one account. Your account email is not shown publicly. Your display name, rating and comment remain pending until an administrator reviews them. They appear publicly only if approved and you agreed to public display. Sign-in does not verify that someone bought a property or is a client.</p><h2>Website analytics</h2><p>This site uses Vercel Web Analytics to understand page visits and improve the site.</p><h2>LUMA chat</h2><p>If the AI chat is enabled, your latest messages are sent to the AI service so it can generate a reply. The website does not save chat history in its database. Do not enter passwords, identity documents, financial details or other sensitive information. To share contact details for a follow-up, use the enquiry form; LUMA does not collect those details inside chat.</p><h2>Access and handling</h2><p>Dashboard access is restricted to an account explicitly added to the site administrator list. Lewis should review enquiries and remove records that are no longer needed. Do not submit sensitive financial or identity information through this form.</p><h2>Questions</h2><p>Contact Lewis through a verified contact method listed on this website.</p></div></ContentPage>;
 }
 
 function EnquiryPage() {
@@ -236,7 +237,7 @@ function Field({ label, name, value, onChange, error, required, optional, ...pro
 }
 
 const pageComponents = {
-  '/': HomePage, '/homes': HomesPage, '/projects': ProjectsPage, '/about-lewis': AboutPage, '/enquire': EnquiryPage,
+  '/': HomePage, '/homes': HomesPage, '/projects': ProjectsPage, '/testimonials': TestimonialsPage, '/about-lewis': AboutPage, '/enquire': EnquiryPage,
   '/how-it-works': HowPage, '/viewing-checklist': ChecklistPage, '/buying-guide': GuidePage,
   '/faqs': FAQPage, '/willstone-homes': WillstonePage,
   '/manna-residence': () => <ProjectDetailPage slug="manna-residence" canonicalPath="/projects/manna-residence"/>, '/mangu-grove': () => <ProjectDetailPage slug="mangu-grove" canonicalPath="/projects/mangu-grove"/>, '/juja-grove': () => <ProjectDetailPage slug="juja-grove" canonicalPath="/projects/juja-grove"/>,

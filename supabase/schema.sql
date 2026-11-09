@@ -85,6 +85,18 @@ create table if not exists public.social_links (
   unique (owner_scope, platform)
 );
 
+create table if not exists public.testimonials (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null unique references auth.users(id) on delete cascade,
+  display_name text not null check (char_length(trim(display_name)) between 2 and 80),
+  rating smallint not null check (rating between 1 and 5),
+  comment text not null check (char_length(trim(comment)) between 20 and 2000),
+  consent_public boolean not null default false,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create or replace function public.is_site_admin()
 returns boolean
 language sql
@@ -106,9 +118,12 @@ alter table public.properties enable row level security;
 alter table public.projects enable row level security;
 alter table public.enquiries enable row level security;
 alter table public.social_links enable row level security;
+alter table public.testimonials enable row level security;
 
 grant select on public.admin_users to authenticated;
 grant select, insert, update, delete on public.properties, public.projects, public.social_links to authenticated;
+grant select, insert, update, delete on public.testimonials to authenticated;
+grant select on public.testimonials to anon;
 grant select, update, delete on public.enquiries to authenticated;
 grant select on public.properties, public.projects, public.social_links to anon, authenticated;
 revoke insert on public.enquiries from anon, authenticated;
@@ -124,6 +139,10 @@ drop policy if exists "Visitors can submit enquiries" on public.enquiries;
 drop policy if exists "Admins can manage enquiries" on public.enquiries;
 drop policy if exists "Public can read active social links" on public.social_links;
 drop policy if exists "Admins can manage social links" on public.social_links;
+drop policy if exists "Public can read approved testimonials" on public.testimonials;
+drop policy if exists "Signed in users can submit pending testimonials" on public.testimonials;
+drop policy if exists "Users can read their own testimonials" on public.testimonials;
+drop policy if exists "Admins can manage testimonials" on public.testimonials;
 
 create policy "Admins can read their own admin record"
   on public.admin_users for select to authenticated
@@ -171,6 +190,26 @@ create policy "Public can read active social links"
   using (is_active);
 create policy "Admins can manage social links"
   on public.social_links for all to authenticated
+  using (public.is_site_admin()) with check (public.is_site_admin());
+
+create policy "Public can read approved testimonials"
+  on public.testimonials for select to anon, authenticated
+  using (status = 'approved' and consent_public is true);
+create policy "Signed in users can submit pending testimonials"
+  on public.testimonials for insert to authenticated
+  with check (
+    user_id = (select auth.uid())
+    and status = 'pending'
+    and consent_public is true
+    and char_length(trim(display_name)) between 2 and 80
+    and rating between 1 and 5
+    and char_length(trim(comment)) between 20 and 2000
+  );
+create policy "Users can read their own testimonials"
+  on public.testimonials for select to authenticated
+  using (user_id = (select auth.uid()));
+create policy "Admins can manage testimonials"
+  on public.testimonials for all to authenticated
   using (public.is_site_admin()) with check (public.is_site_admin());
 
 insert into public.projects (title, slug, location, description, home_type, land_size, features, cover_image, published)
