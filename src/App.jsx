@@ -5,6 +5,7 @@ import ChatWidget from './ChatWidget.jsx';
 import { projects, projectBySlug } from './data/projects.js';
 import { ProjectsPage, ProjectDetailPage, ProjectCards } from './ProjectPages.jsx';
 import TestimonialsPage from './TestimonialsPage.jsx';
+import './footer.css';
 
 const AdminPage = lazy(() => import('./AdminPage.jsx'));
 
@@ -54,6 +55,15 @@ function Header() {
   </header>;
 }
 
+function FooterNavigation() {
+  return <nav className="footer-navigation" aria-label="Footer navigation">
+    <section className="footer-navigation-group"><h2>Explore</h2><a href="/homes">Find a home</a><a href="/projects">Projects</a><a href="/testimonials">Testimonials</a><a href="/areas">Areas</a><a href="/willstone-homes">Willstone Homes</a></section>
+    <section className="footer-navigation-group"><h2>Guides</h2><a href="/about-lewis">About Lewis</a><a href="/how-it-works">How it works</a><a href="/viewing-checklist">Viewing checklist</a><a href="/buying-guide">Home buying guide</a><a href="/faqs">FAQs</a><a href="/privacy">Privacy</a></section>
+    <section className="footer-navigation-group"><h2>Get in touch</h2><a href="/enquire">Make an enquiry</a><a href="tel:+254114998890">Call Lewis</a><a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">WhatsApp Lewis ↗</a></section>
+    <section className="footer-navigation-group footer-owner-group"><h2>Owner</h2><a className="footer-admin-link" href="/admin"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M12 14v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>Owner dashboard sign in</a><small>Private access for authorized admins</small></section>
+  </nav>;
+}
+
 function Footer() {
   const [socialLinks, setSocialLinks] = useState(null);
   useEffect(() => {
@@ -82,7 +92,7 @@ function Footer() {
     { label: 'TikTok', url: 'https://www.tiktok.com/@willstone.homes' },
     { label: 'YouTube', url: 'https://www.youtube.com/channel/UCgxMais9RLaUvoVHHAP83mQ' },
   ];
-  return <footer className="site-footer"><div className="footer-top"><a className="brand brand-footer" href="/"><span className="brand-mark">H<span>W</span></span><span className="brand-name">Homes with <strong>Lew¥</strong></span></a><p>Making the search for somewhere<br/>feel a little more human.</p><a className="footer-top-link" href="#top">Back to the top ↑</a></div><div className="footer-links">{routes.slice(1).map(([path, label]) => <a key={path} href={path}>{label}</a>)}</div><div className="footer-social" aria-label="Homes with Lew¥ social profiles"><strong>Follow Homes with Lew¥</strong>{personalPlatforms.map(platform => { const link = personalLinks.find(item => item.platform === platform); return link ? <a key={platform} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a> : <span key={platform}>{platform[0].toUpperCase() + platform.slice(1)} · link coming soon</span>; })}{personalLinks.find(item => item.platform === 'whatsapp') ? <a href={personalLinks.find(item => item.platform === 'whatsapp').url} target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a> : <a href="https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g" target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a>}</div><div className="footer-social" aria-label="Official Willstone Homes social profiles"><strong>Follow Willstone Homes</strong>{(companyLinks || officialFallback).map(link => <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homes with Lew¥ · Lewis Njuguna</span><span>IT support professional · Authorized by Willstone Homes to promote and sell its homes</span><a className="footer-phone" href="tel:+254114998890">Call Lewis: +254 114 998 890</a><a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">WhatsApp Lewis ↗</a><a href="/enquire">Start a conversation ↗</a></div></footer>;
+  return <footer className="site-footer"><div className="footer-top"><a className="brand brand-footer" href="/"><span className="brand-mark">H<span>W</span></span><span className="brand-name">Homes with <strong>Lew¥</strong></span></a><p>Making the search for somewhere<br/>feel a little more human.</p><a className="footer-top-link" href="#top">Back to the top ↑</a></div><FooterNavigation/><div className="footer-social" aria-label="Homes with Lew¥ social profiles"><strong>Follow Homes with Lew¥</strong>{personalPlatforms.map(platform => { const link = personalLinks.find(item => item.platform === platform); return link ? <a key={platform} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a> : <span key={platform}>{platform[0].toUpperCase() + platform.slice(1)} · link coming soon</span>; })}{personalLinks.find(item => item.platform === 'whatsapp') ? <a href={personalLinks.find(item => item.platform === 'whatsapp').url} target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a> : <a href="https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g" target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a>}</div><div className="footer-social" aria-label="Official Willstone Homes social profiles"><strong>Follow Willstone Homes</strong>{(companyLinks || officialFallback).map(link => <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homes with Lew¥ · Lewis Njuguna</span><span>IT support professional · Authorized by Willstone Homes to promote and sell its homes</span><a className="footer-phone" href="tel:+254114998890">Call Lewis: +254 114 998 890</a><a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">WhatsApp Lewis ↗</a><a href="/enquire">Start a conversation ↗</a></div></footer>;
 }
 
 function Eyebrow({ children }) { return <p className="eyebrow"><span className="eyebrow-line"/>{children}</p>; }
