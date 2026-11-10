@@ -33,3 +33,25 @@
 .site-footer .footer-bottom .footer-admin-lock{cursor:pointer;text-decoration:none;border-radius:50%;transition:opacity .18s ease,background-color .18s ease}
 .site-footer .footer-bottom .footer-admin-lock:hover,.site-footer .footer-bottom .footer-admin-lock:focus-visible{opacity:.9;background:#d9dbd0}
 .site-footer .footer-bottom .footer-admin-lock:focus-visible{outline:2px solid #647258;outline-offset:3px}
+.site-footer{background:#d9e0d2!important;color:#354035!important}
+.site-footer .footer-top>p{color:#485348}
+.site-footer .footer-top-link{color:#354735}
+.site-footer .footer-navigation-group h2,.site-footer .footer-social h2{color:#354735}
+.site-footer .footer-navigation-group>a,.site-footer .footer-social a{color:#3f4d40}
+.site-footer .footer-navigation-group>a:hover,.site-footer .footer-social a:hover{color:#1f2c20}
+.site-footer .footer-bottom{color:#4c574b}
+.site-footer .footer-bottom .footer-admin-lock{color:#495846;opacity:.58}
+.site-footer .footer-bottom .footer-admin-lock:hover,.site-footer .footer-bottom .footer-admin-lock:focus-visible{opacity:1;background:#c7d1c0}
+
+/* Keep primary actions easy to see and comfortable to tap. */
+.button,.project-search-bar button,.nav-cta{min-height:48px}
+.home-contact-links .button{min-width:176px;min-height:52px;font-size:13px}
+.home-contact-links .home-contact-secondary{display:inline-flex;min-height:44px;align-items:center;padding:0 5px;font-size:12px}
+.project-search-bar button{min-width:118px;font-size:12px}
+.quick-contact{gap:7px;padding:6px;border:1px solid #c9d0c2;border-radius:8px;background:#f8f9f5}
+.quick-contact a{min-width:86px;min-height:46px;border:0!important;border-radius:5px;background:#354735!important;color:#fff!important;font-size:12px!important}
+.quick-contact a:first-child{background:#4c5e49!important;color:#fff!important}
+.quick-contact a:hover{filter:brightness(1.12)}
+.quick-contact a:focus-visible,.home-contact-links a:focus-visible,.project-search-bar button:focus-visible{outline:3px solid #ba8158;outline-offset:3px}
+@media(max-width:760px){.site-footer .footer-top>p{color:#414d41}.site-footer .footer-bottom{color:#4c574b}}
+@media(max-width:650px){.home-contact-links{align-items:stretch;gap:8px 12px}.home-contact-links .button{width:100%;min-height:52px}.home-contact-links .home-contact-secondary{flex:1;justify-content:center;min-height:46px;padding:0 8px;border:1px solid #d5d8cf;border-radius:3px;background:#fffefa;color:#344134}.project-search-bar button{min-height:50px}.quick-contact{left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));justify-content:stretch}.quick-contact a{flex:1;min-width:0}.nexora-closing .home-contact-links .home-contact-secondary{border-color:#ffffff72;background:transparent;color:#fff}}
