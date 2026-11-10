@@ -4,7 +4,7 @@ The website continues saving each enquiry to `public.enquiries`. A Supabase Data
 
 ## One-time setup
 
-Before accepting enquiries with optional email and contact consent, run `supabase/add-enquiry-contact-consent.sql` in the Supabase SQL Editor. The notification function supports missing email and includes the stored consent in the alert.
+Before accepting enquiries with optional email and contact consent, run `supabase/add-enquiry-contact-consent.sql` and `supabase/add-lead-analytics-security.sql` in the Supabase SQL Editor. The notification function supports missing email and includes the stored consent, source and campaign in the alert.
 
 1. Create a Resend account, add and verify a sender domain, and create an API key. Resend requires a verified sender domain for production sending.
 2. In Supabase, open **Edge Functions → Secrets** and add these three secrets:
@@ -15,6 +15,10 @@ Before accepting enquiries with optional email and contact consent, run `supabas
      ```powershell
      [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
      ```
+
+   The function uses Supabase's `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` only inside the Edge Function to read the private notification settings. Never place that key in Vercel or browser `.env` variables. If the dashboard notification email setting is empty, the function defaults to the two owner email addresses already authorized in the database.
+
+   Optional WhatsApp alerts use Twilio. Add `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_WHATSAPP_FROM` as Supabase Edge Function secrets, then set the alert number in Dashboard → Settings. The Twilio WhatsApp sender must already be enabled for your account. If those settings are missing, only email is attempted.
 
 3. From the project folder, deploy the function (replace the project reference with the part before `.supabase.co` in `VITE_SUPABASE_URL`):
 

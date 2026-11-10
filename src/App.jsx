@@ -4,10 +4,22 @@ import { isSupabaseConfigured, supabase } from './lib/supabase.js';
 import ChatWidget from './ChatWidget.jsx';
 import { projects, projectBySlug } from './data/projects.js';
 import { ProjectsPage, ProjectDetailPage, ProjectCards } from './ProjectPages.jsx';
+import { normalizeKenyanPhone, isSpamHoneypotFilled } from './domain/rules.js';
+import { trackingContext } from './domain/dashboard-rules.js';
 import TestimonialsPage from './TestimonialsPage.jsx';
+import { HomepageDesign, MansionetteAlbum } from './HomeDesigns.jsx';
 import './footer.css';
 
 const AdminPage = lazy(() => import('./AdminPage.jsx'));
+
+function recordSiteEvent(eventName, path = window.location.pathname) {
+  if (!supabase) return;
+  const context = trackingContext({ url: window.location.href, referrer: document.referrer, userAgent: navigator.userAgent, pathname: path });
+  const slug = path.startsWith('/projects/') ? path.slice('/projects/'.length).split('/')[0] : projects.find(project => path === `/${project.slug}`)?.slug;
+  supabase.from('site_events').insert({ event_name: eventName, ...context, project_slug: slug || null }).then(({ error }) => {
+    if (error) console.warn('Site event was not recorded. Apply the analytics database migration.', error.message);
+  });
+}
 
 const routes = [
   ['/', 'Home'], ['/homes', 'Homes'], ['/about-lewis', 'About Lewis'],
@@ -57,10 +69,10 @@ function Header() {
 
 function FooterNavigation() {
   return <nav className="footer-navigation" aria-label="Footer navigation">
-    <section className="footer-navigation-group"><h2>Explore</h2><a href="/homes">Find a home</a><a href="/projects">Projects</a><a href="/testimonials">Testimonials</a><a href="/areas">Areas</a><a href="/willstone-homes">Willstone Homes</a></section>
-    <section className="footer-navigation-group"><h2>Guides</h2><a href="/about-lewis">About Lewis</a><a href="/how-it-works">How it works</a><a href="/viewing-checklist">Viewing checklist</a><a href="/buying-guide">Home buying guide</a><a href="/faqs">FAQs</a><a href="/privacy">Privacy</a></section>
+    <section className="footer-navigation-group"><h2>Explore</h2><a href="/homes">Find a home</a><a href="/projects">Projects</a><a href="/areas">Areas</a><a href="/willstone-homes">Willstone Homes</a></section>
+    <section className="footer-navigation-group"><h2>Guides</h2><a href="/about-lewis">About Lewis</a><a href="/how-it-works">How it works</a><a href="/viewing-checklist">Viewing checklist</a><a href="/buying-guide">Home buying guide</a><a href="/faqs">FAQs</a></section>
     <section className="footer-navigation-group"><h2>Get in touch</h2><a href="/enquire">Make an enquiry</a><a href="tel:+254114998890">Call Lewis</a><a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">WhatsApp Lewis ↗</a></section>
-    <section className="footer-navigation-group footer-owner-group"><h2>Owner</h2><a className="footer-admin-link" href="/admin"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M12 14v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>Owner dashboard sign in</a><small>Private access for authorized admins</small></section>
+    <section className="footer-navigation-group"><h2>Community</h2><a href="/testimonials">Testimonials</a><a href="/privacy">Privacy</a></section>
   </nav>;
 }
 
@@ -92,7 +104,8 @@ function Footer() {
     { label: 'TikTok', url: 'https://www.tiktok.com/@willstone.homes' },
     { label: 'YouTube', url: 'https://www.youtube.com/channel/UCgxMais9RLaUvoVHHAP83mQ' },
   ];
-  return <footer className="site-footer"><div className="footer-top"><a className="brand brand-footer" href="/"><span className="brand-mark">H<span>W</span></span><span className="brand-name">Homes with <strong>Lew¥</strong></span></a><p>Making the search for somewhere<br/>feel a little more human.</p><a className="footer-top-link" href="#top">Back to the top ↑</a></div><FooterNavigation/><div className="footer-social" aria-label="Homes with Lew¥ social profiles"><strong>Follow Homes with Lew¥</strong>{personalPlatforms.map(platform => { const link = personalLinks.find(item => item.platform === platform); return link ? <a key={platform} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a> : <span key={platform}>{platform[0].toUpperCase() + platform.slice(1)} · link coming soon</span>; })}{personalLinks.find(item => item.platform === 'whatsapp') ? <a href={personalLinks.find(item => item.platform === 'whatsapp').url} target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a> : <a href="https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g" target="_blank" rel="noopener noreferrer">WhatsApp Channel ↗</a>}</div><div className="footer-social" aria-label="Official Willstone Homes social profiles"><strong>Follow Willstone Homes</strong>{(companyLinks || officialFallback).map(link => <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homes with Lew¥ · Lewis Njuguna</span><span>IT support professional · Authorized by Willstone Homes to promote and sell its homes</span><a className="footer-phone" href="tel:+254114998890">Call Lewis: +254 114 998 890</a><a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">WhatsApp Lewis ↗</a><a href="/enquire">Start a conversation ↗</a></div></footer>;
+  const channel = personalLinks.find(item => item.platform === 'whatsapp') || { url: 'https://whatsapp.com/channel/0029VbAtw1UKbYMNrzgEqS0g' };
+    return <footer className="site-footer"><div className="footer-top"><a className="brand brand-footer" href="/"><span className="brand-mark">H<span>W</span></span><span className="brand-name">Homes with <strong>Lew¥</strong></span></a><p>Project details shared by Lewis Njuguna.<br/>Confirm current prices and availability before deciding.</p><a className="footer-top-link" href="#top">Back to the top ↑</a></div><FooterNavigation/><div className="footer-social-grid"><section className="footer-social" aria-label="Homes with Lew¥ social profiles"><h2>Follow Homes with Lew¥</h2>{personalPlatforms.map(platform => { const link = personalLinks.find(item => item.platform === platform); return link ? <a key={platform} href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a> : null; })}<a href={channel.url} target="_blank" rel="noopener noreferrer">WhatsApp Channel</a></section><section className="footer-social" aria-label="Official Willstone Homes social profiles"><h2>Follow Willstone Homes</h2>{(companyLinks || officialFallback).map(link => <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>)}</section></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homes with Lew¥ · Lewis Njuguna</span><span>IT support professional · Authorized by Willstone Homes to promote and sell its homes</span><a className="footer-admin-lock" href="/admin" aria-label="Admin sign in" title="Admin sign in"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M12 14v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></a></div></footer>;
 }
 
 function Eyebrow({ children }) { return <p className="eyebrow"><span className="eyebrow-line"/>{children}</p>; }
@@ -123,11 +136,7 @@ function FeaturedDevelopments() {
 
 function HomePage() {
   usePageMeta('Homes with Lewy | Willstone Homes Developments in Kenya', 'Explore homes and developments in Ruiru, Juja, Joska and along Thika Superhighway. Lewis Njuguna works in IT support and is authorized by Willstone Homes to promote and sell its homes.');
-  return <><main><section className="hero" id="top"><div className="hero-copy"><Eyebrow>A considered way home</Eyebrow><h1>A place to<br/>put down <em>roots.</em></h1><p className="hero-intro">Homes with Lewy is Lewis Njuguna’s property portfolio for homes and residential developments in Kenya, shared in connection with Willstone Homes.</p><ButtonLink href="/homes">Explore homes</ButtonLink><div className="hero-note"><span className="note-dot"/>Listing details are shared only after verification</div></div><div className="hero-image-wrap"><img className="hero-image" src="/images/white-park-2/whitepark-render-01.jpeg" alt="Architectural render of a proposed Whitepark 2 bungalow with a pitched roof and stone accents" fetchPriority="high"/><div className="image-caption"><span className="caption-dot"/>Whitepark 2 · Architectural render <span className="caption-rule"/> Illustrative design</div><div className="hero-stamp" aria-label="Find your place"><span>FIND YOUR</span><strong>place</strong><span>TO CALL HOME</span><i aria-hidden="true">✳</i></div></div><div className="hero-index"><span>01</span><span className="index-rule"/><span>THE SEARCH STARTS HERE</span></div></section>
-    <section className="homes section-pad"><div className="section-heading"><div><Eyebrow>A good place to begin</Eyebrow><h2>Find your <em>somewhere.</em></h2></div><p className="section-aside">Explore developments shared by Lewis with Willstone Homes. Confirm current details and availability directly.</p></div><FeaturedDevelopments/><div className="center-link"><a className="text-link" href="/homes">View verified individual homes <span aria-hidden="true">↗</span></a></div></section>
-    <ProgressTeaser/>
-    <section className="about section-pad"><div className="about-image"><img src="/images/white-park-2/progress-02.jpg" alt="Row of unfinished masonry homes, some with completed roof tiles and one with exposed roof framing" loading="lazy"/><span className="about-image-label">A home is more than four walls.</span><span className="about-image-index">02 / A LITTLE ABOUT LEWIS</span></div><div className="about-copy"><Eyebrow>The person behind the page</Eyebrow><h2>A real person.<br/><em>A practical approach.</em></h2><p className="about-lead">I’m Lewis Njuguna — I work in IT support, and I am authorized by Willstone Homes to promote and sell its homes.</p><p className="about-body">I bring a problem-solving mindset and a straightforward approach to conversations about finding a home. This page shares development information and individually verified Willstone Homes listings, and makes it easier to ask questions.</p><RoleCard/><a className="text-link" href="/about-lewis">Get to know Lewis <span aria-hidden="true">↗</span></a></div></section>
-    <section className="home-cta section-pad"><Eyebrow>Start a conversation</Eyebrow><h2>The right home starts<br/>with <em>a hello.</em></h2><p>Tell Lewis a little about what you’re looking for.</p><ButtonLink href="/enquire">Make an enquiry</ButtonLink><div className="center-link"><a className="text-link" href="/testimonials">Read or share an experience <span aria-hidden="true">↗</span></a></div></section></main></>;
+  return <HomepageDesign/>;
 }
 
 function RoleCard() { return <div className="role-card"><span className="role-icon" aria-hidden="true">✳</span><span><strong>Two roles, one clear introduction.</strong><small>IT support professional · Authorized by Willstone Homes to promote and sell its homes</small></span></div>; }
@@ -143,7 +152,7 @@ function ContentPage({ eyebrow, title, lead, children }) { return <main classNam
 
 function HomesPage() {
   usePageMeta('Verified homes', 'Browse verified Willstone Homes listings and enquire about a property that interests you.');
-  return <ContentPage eyebrow="Homes and developments" title={<>Find a home that feels <em>right.</em></>} lead="Explore developments Lewis is authorized by Willstone Homes to promote and sell. Prices below were shared by Lewis; ask about current availability and terms."><FeaturedDevelopments/><section className="verified-homes-section"><h2>Verified individual homes</h2><p>These are individual home listings confirmed with Willstone Homes, separate from the development summaries above.</p><ListingSection full/></section></ContentPage>;
+    return <ContentPage eyebrow="Homes and developments" title={<>Find a home that feels <em>right.</em></>} lead="Explore developments Lewis is authorized by Willstone Homes to promote and sell. Prices below were shared by Lewis; ask about current availability and terms."><FeaturedDevelopments/><MansionetteAlbum compact/><section className="verified-homes-section"><h2>Verified individual homes</h2><p>These are individual home listings confirmed with Willstone Homes, separate from the development summaries above.</p><ListingSection full/></section></ContentPage>;
 }
 function AboutPage() {
   usePageMeta('About Lewis Njuguna', 'Meet Lewis Njuguna, an IT support professional who is authorized by Willstone Homes to promote and sell its homes.');
@@ -175,7 +184,7 @@ function FAQPage() {
 
 function WillstonePage() {
   usePageMeta('Willstone Homes', 'Information about Lewis Njuguna’s connection with Willstone Homes and where verified listings appear.');
-  return <ContentPage eyebrow="Property listings" title={<>Shared with <em>Willstone Homes.</em></>} lead="Lewis Njuguna is authorized by Willstone Homes to promote and sell its homes. This page is a personal site for sharing development information and receiving enquiries."><div className="article-copy"><h2>What you’ll find here</h2><p>Homes with Lew¥ is Lewis’s personal property page. Project details are shared from information Lewis has received and should be confirmed directly before you make a decision.</p><div className="notice-box"><strong>Clear roles</strong><p>Lewis also works in IT support. This site does not describe him as a licensed real estate agent or broker.</p></div><ButtonLink href="/projects">Browse project details</ButtonLink></div></ContentPage>;
+    return <ContentPage eyebrow="Property listings" title={<>Shared with <em>Willstone Homes.</em></>} lead="Lewis Njuguna is authorized by Willstone Homes to promote and sell its homes. This page is a personal site for sharing development information and receiving enquiries."><div className="article-copy"><h2>What you’ll find here</h2><p>Homes with Lew¥ is Lewis’s personal property page. Project details are shared from information Lewis has received and should be confirmed directly before you make a decision.</p><div className="notice-box"><strong>Clear roles</strong><p>Lewis also works in IT support. This site does not describe him as a licensed real estate agent or broker.</p></div><ButtonLink href="/projects">Browse project details</ButtonLink></div><MansionetteAlbum compact/><figure className="willstone-progress-photo"><img src="/images/whitepark-2-estate/progress-08.jpg" alt="Site progress at Whitepark 2 Estate, photographed during construction" loading="lazy"/><figcaption>Whitepark 2 Estate · Shared site-progress photo. This image shows construction progress, not a completed home or current availability.</figcaption></figure></ContentPage>;
 }
 
 function AreasPage() {
@@ -186,7 +195,7 @@ function AreasPage() {
 function PrivacyPage() {
   usePageMeta('Privacy', 'How enquiry information is handled in this Homes with Lew¥ website preview.');
   const configuredNotice = isSupabaseConfigured ? 'Your enquiry is saved to the Homes with Lew¥ database and visible to an authorized site administrator through the private dashboard. Email alerts need separate setup and may not be active yet.' : 'Online enquiries are unavailable until Supabase is configured. Information entered here is not sent or saved.';
-  return <ContentPage eyebrow="Your information" title={<>A clear note about <em>privacy.</em></>} lead={configuredNotice}><div className="article-copy"><h2>Enquiry information</h2><p>{configuredNotice} Enquiries include your name, phone number, chosen property, message, explicit contact consent, and any optional email or preferences you provide.</p><h2>Testimonials</h2><p>If you choose to submit feedback, Google sign-in is used to limit spam and prevent multiple reviews from one account. Your account email is not shown publicly. Your display name, rating and comment remain pending until an administrator reviews them. They appear publicly only if approved and you agreed to public display. Sign-in does not verify that someone bought a property or is a client.</p><h2>Website analytics</h2><p>This site uses Vercel Web Analytics to understand page visits and improve the site.</p><h2>LUMA chat</h2><p>If the AI chat is enabled, your latest messages are sent to the AI service so it can generate a reply. The website does not save chat history in its database. Do not enter passwords, identity documents, financial details or other sensitive information. To share contact details for a follow-up, use the enquiry form; LUMA does not collect those details inside chat.</p><h2>Access and handling</h2><p>Dashboard access is restricted to an account explicitly added to the site administrator list. Lewis should review enquiries and remove records that are no longer needed. Do not submit sensitive financial or identity information through this form.</p><h2>Questions</h2><p>Contact Lewis through a verified contact method listed on this website.</p></div></ContentPage>;
+  return <ContentPage eyebrow="Your information" title={<>A clear note about <em>privacy.</em></>} lead={configuredNotice}><div className="article-copy"><h2>Enquiry information</h2><p>{configuredNotice} Enquiries include your name, phone number, chosen property, message, explicit contact consent, and any optional email or preferences you provide.</p><h2>Testimonials</h2><p>If you choose to submit feedback, Google sign-in is used to limit spam and prevent multiple reviews from one account. Your account email is not shown publicly. Your display name, rating and comment remain pending until an administrator reviews them. They appear publicly only if approved and you agreed to public display. Sign-in does not verify that someone bought a property or is a client.</p><h2>Analytics and cookie notice</h2><p>This site uses Vercel Web Analytics and first-party event counts to understand page views, referrer-derived traffic source, campaign, device type and actions such as contact clicks or enquiries. First-party event records do not include a visitor ID or fingerprint. Vercel states that its Web Analytics does not use cookies and uses a request-derived identifier for aggregate statistics. Signing in to the dashboard or testimonials stores an authentication session in your browser so you remain signed in.</p><h2>LUMA chat</h2><p>If the AI chat is enabled, your latest messages are sent to the AI service so it can generate a reply. The website does not save chat history in its database. Do not enter passwords, identity documents, financial details or other sensitive information. To share contact details for a follow-up, use the enquiry form; LUMA does not collect those details inside chat.</p><h2>Access and handling</h2><p>Enquiry records are available to the administrator accounts allowed by the site database policies. Lewis should review enquiries and remove records that are no longer needed. Do not submit sensitive financial or identity information through this form.</p><h2>Questions</h2><p>Contact Lewis through a verified contact method listed on this website.</p></div></ContentPage>;
 }
 
 function EnquiryPage() {
@@ -197,15 +206,25 @@ function EnquiryPage() {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
+  const [consentText, setConsentText] = useState('I agree to be contacted by phone or WhatsApp about this property.');
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    supabase.from('site_settings').select('value').eq('key', 'consent_text').maybeSingle().then(({ data }) => {
+      if (active && data?.value?.trim()) setConsentText(data.value.trim());
+    });
+    return () => { active = false; };
+  }, []);
   const update = event => setForm(current => ({ ...current, [event.target.name]: event.target.type === 'checkbox' ? event.target.checked : event.target.value }));
   async function submit(event) {
     event.preventDefault();
-    if (form.website) { setStatus({ type: 'success', text: 'Thanks. Your enquiry has been received.' }); return; }
+    if (isSpamHoneypotFilled(form.website)) { setStatus({ type: 'error', text: 'This enquiry could not be accepted. Please contact Lewis directly if you need help.' }); return; }
     const next = {};
     if (form.name.trim().length < 2) next.name = 'Please enter your name (at least 2 characters).';
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'Enter a valid email address or leave it blank.';
-    if (!form.phone.trim()) next.phone = 'Please enter a phone number.';
-    else if (!/^[+\d\s().-]{7,20}$/.test(form.phone.trim())) next.phone = 'Enter a valid phone number.';
+    const normalizedPhone = normalizeKenyanPhone(form.phone);
+    if (!form.phone.trim()) next.phone = 'Please enter a Kenyan mobile number.';
+    else if (!normalizedPhone) next.phone = 'Enter a valid Kenyan mobile: 07xx, 01xx or +254 format.';
     if (form.message.trim().length < 10) next.message = 'Please share at least 10 characters.';
     if (form.message.trim().length > 5000) next.message = 'Please keep your message under 5,000 characters.';
     if (!form.contact_consent) next.contact_consent = 'Please agree to be contacted about this property.';
@@ -215,17 +234,19 @@ function EnquiryPage() {
     setLoading(true); setStatus({ type: 'loading', text: 'Sending your enquiry...' });
     try {
       const { error } = await supabase.from('enquiries').insert({
-        name: form.name.trim(), email: form.email.trim() || null, phone: form.phone.trim(),
+        name: form.name.trim(), email: form.email.trim() || null, phone: normalizedPhone,
         property_title: form.property || null, budget_range: form.budget || null,
-        preferred_area: form.area || null, timeline: form.timeline || null,
-        message: form.message.trim(), contact_consent: true,
+        preferred_area: form.area || null, timeline: form.timeline || null, honeypot: form.website,
+        message: form.message.trim(), contact_consent: true, source: enquirySource(), campaign: new URLSearchParams(window.location.search).get('utm_campaign')?.slice(0, 120) || null,
       });
+      if (error?.code === '23505' || error?.message?.includes('recent enquiry')) throw new Error('You already sent an enquiry about this development in the last 10 minutes. Lewis will follow up soon.');
       if (error) throw error;
+      recordSiteEvent('enquiry_submitted');
       setStatus({ type: 'success', text: 'Your enquiry has been saved to the owner dashboard. Email alerts depend on the notification setup. For a quick reply, call or WhatsApp Lewis.' });
       setForm({ name: '', email: '', phone: '', property: '', budget: '', area: '', timeline: '', message: '', website: '', contact_consent: false });
       setErrors({});
-    } catch {
-      setStatus({ type: 'error', text: 'We could not save your enquiry. Please check that the contact-consent database update has been applied, then try again or contact Lewis.' });
+    } catch (error) {
+      setStatus({ type: 'error', text: error.message || 'We could not save your enquiry. Apply the latest enquiry database update, then try again or contact Lewis.' });
     } finally { setLoading(false); }
   }
   return <ContentPage eyebrow="Start a conversation" title={<>The right home starts<br/>with <em>a hello.</em></>} lead={supabase ? 'Share what you are looking for. Your enquiry will be saved in the private owner dashboard.' : 'Share what you are looking for. Online enquiries are not connected yet.'}>
@@ -237,10 +258,26 @@ function EnquiryPage() {
       <div className="form-row"><div className="field"><label htmlFor="budget">Budget range <span className="optional">(optional)</span></label><select id="budget" name="budget" value={form.budget} onChange={update}><option value="">Prefer not to say</option><option>Under KSh 4M</option><option>KSh 4M-10M</option><option>KSh 10M-16M</option><option>KSh 16M-22M</option><option>Over KSh 22M</option></select></div><div className="field"><label htmlFor="area">Preferred area <span className="optional">(optional)</span></label><select id="area" name="area" value={form.area} onChange={update}><option value="">Not sure yet</option><option>Ruiru</option><option>Mangu / Thika Superhighway</option><option>Juja Farm</option><option>Joska / Kangundo Road</option><option>Another area</option></select></div></div>
       <div className="field"><label htmlFor="timeline">When are you looking to buy? <span className="optional">(optional)</span></label><select id="timeline" name="timeline" value={form.timeline} onChange={update}><option value="">Just exploring</option><option>As soon as possible</option><option>Within 1-3 months</option><option>Within 3-6 months</option><option>Within 6-12 months</option></select></div>
       <div className="field"><label htmlFor="message">What are you looking for? <i>*</i></label><textarea id="message" name="message" rows="4" minLength="10" maxLength="5000" required value={form.message} onChange={update} placeholder="Tell Lewis what matters to you in a home..." aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined}/>{errors.message && <span className="field-error" id="message-error">{errors.message}</span>}</div>
-      <div className="consent-field"><label><input type="checkbox" name="contact_consent" checked={form.contact_consent} onChange={update} aria-invalid={Boolean(errors.contact_consent)} aria-describedby={errors.contact_consent ? 'consent-error' : 'consent-help'}/><span>I agree to be contacted by phone or WhatsApp about this property. <i>*</i></span></label><small id={errors.contact_consent ? 'consent-error' : 'consent-help'}>{errors.contact_consent || 'Required before Lewis can follow up about this enquiry.'}</small></div>
-      <p className="form-privacy">Your enquiry and consent are stored in Supabase for the owner dashboard. Do not send identity or financial documents through this form.</p>{status.text && <div className="form-status" data-state={status.type} role="status" aria-live="polite">{status.text}</div>}<button className="button button-dark submit-button" type="submit" disabled={loading || !supabase}>{loading ? 'Sending your enquiry...' : supabase ? 'Send enquiry' : 'Enquiries not connected'} {supabase && !loading && <span aria-hidden="true">↗</span>}</button>
+      <div className="consent-field"><label><input type="checkbox" name="contact_consent" checked={form.contact_consent} onChange={update} aria-invalid={Boolean(errors.contact_consent)} aria-describedby={errors.contact_consent ? 'consent-error' : 'consent-help'}/><span>{consentText} <i>*</i></span></label><small id={errors.contact_consent ? 'consent-error' : 'consent-help'}>{errors.contact_consent || 'Required before Lewis can follow up about this enquiry.'}</small></div>
+      <p className="form-privacy">Your enquiry and consent are stored in Supabase for the owner dashboard. See the <a href="/privacy">privacy and analytics notice</a>. Do not send identity or financial documents through this form.</p>{status.text && <div className="form-status" data-state={status.type} role="status" aria-live="polite">{status.text}</div>}<button className="button button-dark submit-button" type="submit" disabled={loading || !supabase}>{loading ? 'Sending your enquiry...' : supabase ? 'Send enquiry' : 'Enquiries not connected'} {supabase && !loading && <span aria-hidden="true">↗</span>}</button>
     </form><p className="page-outro">For a quicker response, <a href="tel:+254114998890">call Lewis at +254 114 998 890</a> or <a href="https://wa.me/254114998890" target="_blank" rel="noopener noreferrer">message him on WhatsApp</a>. The WhatsApp Channel is for updates.</p>
   </ContentPage>;
+}
+function enquirySource() {
+  const params = new URLSearchParams(window.location.search);
+  const utm = params.get('utm_source');
+  if (utm) return utm.slice(0, 80);
+  const source = params.get('source');
+  if (source) return source.slice(0, 80);
+  try {
+    const referrer = document.referrer ? new URL(document.referrer).hostname : '';
+    if (/google|bing|yahoo|duckduckgo/i.test(referrer)) return 'search';
+    if (/instagram/i.test(referrer)) return 'instagram';
+    if (/tiktok/i.test(referrer)) return 'tiktok';
+    if (/facebook/i.test(referrer)) return 'facebook';
+    if (/whatsapp/i.test(referrer)) return 'whatsapp';
+  } catch { /* Ignore malformed referrers. */ }
+  return 'direct';
 }
 function Field({ label, name, value, onChange, error, required, optional, ...props }) {
   return <div className="field"><label htmlFor={name}>{label} {optional ? <span className="optional">(optional)</span> : required && <i>*</i>}</label><input id={name} name={name} value={value} onChange={onChange} required={required} aria-invalid={Boolean(error)} aria-describedby={error ? `${name}-error` : undefined} {...props}/>{error && <span className="field-error" id={`${name}-error`}>{error}</span>}</div>;
@@ -263,6 +300,31 @@ function QuickContact() { return <aside className="quick-contact" aria-label="Co
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
+  useEffect(() => {
+    if (path === '/admin') return undefined;
+    recordSiteEvent('page_view', path);
+    let formStarted = false;
+    const click = event => {
+      const anchor = event.target.closest('a');
+      if (anchor) {
+        const href = anchor.href || '';
+        if (href.startsWith('tel:')) recordSiteEvent('call_click', path);
+        else if (href.includes('wa.me')) recordSiteEvent('whatsapp_click', path);
+        else if (href.includes('maps.google')) recordSiteEvent('map_clicked', path);
+        else if (anchor.textContent.toLowerCase().includes('brochure')) recordSiteEvent('brochure_clicked', path);
+      }
+      if (event.target.closest('.project-gallery img')) recordSiteEvent('gallery_opened', path);
+    };
+    const focus = event => {
+      if (event.target.closest('.enquiry-form') && !formStarted) {
+        formStarted = true;
+        recordSiteEvent('enquiry_started', path);
+      }
+    };
+    document.addEventListener('click', click);
+    document.addEventListener('focusin', focus);
+    return () => { document.removeEventListener('click', click); document.removeEventListener('focusin', focus); };
+  }, [path]);
   if (path === '/admin') return <Suspense fallback={<main className="admin-gate"><p className="admin-loading">Loading the owner dashboard…</p></main>}><AdminPage/></Suspense>;
   const detailSlug = path.startsWith('/projects/') ? path.slice('/projects/'.length) : null;
   const Page = detailSlug ? () => <ProjectDetailPage slug={detailSlug}/> : pageComponents[path] || NotFound;

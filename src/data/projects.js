@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Canonical, public project details for the project-page sample.
  * Add only information confirmed by Lewis/Willstone Homes. Omit unknown fields.
  * @typedef {'selling'|'sold out'|'coming soon'} ProjectStatus
@@ -6,6 +6,32 @@
  * @typedef {{src:string, alt:string, caption?:string, kind?:'render'|'site-photo'}} ProjectImage
  * @typedef {{deposit?:string, balanceTerms?:string, duration?:string}} ProjectPaymentPlan
  * @typedef {{slug:string, name:string, location:{area:string, landmarkRoad:string}, status?:ProjectStatus, unitTypes?:ProjectUnitType[], priceFrom?:number, priceNotes?:string, plotSize?:string, titleStatus?:string, features?:string[], security?:string, water?:string, electricity?:string, gated?:boolean, driveTimes?:{landmark:string, time:string}[], gallery?:ProjectImage[], heroImage?:ProjectImage, floorPlan?:ProjectImage, videoUrl?:string, brochureUrl?:string, mapUrl?:string, coordinates?:{latitude:number, longitude:number}, lastVerified?:string, description:string, seoDescription:string}}
+ * @typedef {Object} Project
+ * @property {string} slug
+ * @property {string} name
+ * @property {{area:string, landmarkRoad:string}} location
+ * @property {ProjectStatus} [status]
+ * @property {ProjectUnitType[]} [unitTypes]
+ * @property {number} [priceFrom]
+ * @property {ProjectImage[]} [gallery]
+ * @property {ProjectImage} [heroImage]
+ * @property {ProjectImage} [floorPlan]
+ * @property {ProjectPaymentPlan} [paymentPlan]
+ * @property {string} [plotSize]
+ * @property {string} [titleStatus]
+ * @property {string[]} [features]
+ * @property {string} [security]
+ * @property {string} [water]
+ * @property {string} [electricity]
+ * @property {boolean} [gated]
+ * @property {{landmark:string, time:string}[]} [driveTimes]
+ * @property {string} [videoUrl]
+ * @property {string} [brochureUrl]
+ * @property {string} [mapUrl]
+ * @property {{latitude:number, longitude:number}} [coordinates]
+ * @property {string} [lastVerified]
+ * @property {string} description
+ * @property {string} seoDescription
  */
 
 /** @type {Project[]} */
@@ -20,16 +46,16 @@ export const projects = [
     features: ['Cabro-paved driveway', 'Own compound', 'Garden'],
     gated: true,
     heroImage: {
-      src: '/images/white-park-2/whitepark-render-01.jpeg',
+      src: '/images/whitepark-2-estate/whitepark-render-01.jpeg',
       alt: 'Architectural render of a proposed Whitepark 2 bungalow with a pitched roof and stone accents',
-      caption: 'Architectural render · illustrative design, not a photo of a completed home',
+      caption: 'Architectural render Â· illustrative design, not a photo of a completed home',
       kind: 'render',
     },
     gallery: [
-      { src: '/images/white-park-2/whitepark-render-01.jpeg', alt: 'Architectural render of a proposed Whitepark 2 bungalow with a pitched roof and stone accents', caption: 'Architectural render · illustrative design', kind: 'render' },
-      { src: '/images/white-park-2/whitepark-render-02.jpeg', alt: 'Second architectural view of a proposed Whitepark 2 bungalow and driveway', caption: 'Architectural render · illustrative design', kind: 'render' },
-      { src: '/images/white-park-2/progress-08.jpg', alt: 'Aerial site-progress photo showing rows of unfinished homes and surrounding greenery at Whitepark 2', caption: 'Site progress photo · conditions may have changed', kind: 'site-photo' },
-      { src: '/images/white-park-2/progress-12.jpg', alt: 'Site-progress photo looking down a central access road between homes at Whitepark 2', caption: 'Site progress photo · conditions may have changed', kind: 'site-photo' },
+      { src: '/images/whitepark-2-estate/whitepark-render-01.jpeg', alt: 'Architectural render of a proposed Whitepark 2 bungalow with a pitched roof and stone accents', caption: 'Architectural render Â· illustrative design', kind: 'render' },
+      { src: '/images/whitepark-2-estate/whitepark-render-02.jpeg', alt: 'Second architectural view of a proposed Whitepark 2 bungalow and driveway', caption: 'Architectural render Â· illustrative design', kind: 'render' },
+      { src: '/images/whitepark-2-estate/progress-08.jpg', alt: 'Aerial site-progress photo showing rows of unfinished homes and surrounding greenery at Whitepark 2', caption: 'Site progress photo Â· conditions may have changed', kind: 'site-photo' },
+      { src: '/images/whitepark-2-estate/progress-12.jpg', alt: 'Site-progress photo looking down a central access road between homes at Whitepark 2', caption: 'Site progress photo Â· conditions may have changed', kind: 'site-photo' },
     ],
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=Joska%2C+Kangundo+Road%2C+near+Greater+Eastern+Bypass',
     seoDescription: 'Explore Whitepark 2 Estate in Joska, near Kangundo Road and the Greater Eastern Bypass: 3-bedroom bungalows with DSQ, private gardens and cabro-paved driveways.',

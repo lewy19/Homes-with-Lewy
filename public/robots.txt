@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/
+Disallow: /api/admin/
 
 Sitemap: https://homes-with-lewy.vercel.app/sitemap.xml
+Sitemap: https://homes-with-lewy.vercel.app/api/projects-sitemap

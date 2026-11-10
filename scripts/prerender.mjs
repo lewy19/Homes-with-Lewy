@@ -123,7 +123,10 @@ try {
   globalThis.window = { location: { pathname: '/admin', search: '' } };
   const adminMarkup = renderToString(createElement(App));
   await mkdir('dist/admin', { recursive: true });
-  await writeFile('dist/admin/index.html', shell.replace('<div id="root"></div>', `<div id="root">${adminMarkup}</div>`));
+  const adminHtml = shell
+    .replace('<div id="root"></div>', `<div id="root">${adminMarkup}</div>`)
+    .replace('</head>', '    <meta name="robots" content="noindex, nofollow" />\n  </head>');
+  await writeFile('dist/admin/index.html', adminHtml);
 
   // Vercel serves this file with HTTP 404 for paths that do not match a page.
   globalThis.window = { location: { pathname: '/__homes_with_lewy_not_found__', search: '' } };

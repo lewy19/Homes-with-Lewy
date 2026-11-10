@@ -1,3 +1,35 @@
-.footer-navigation{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid #ffffff26;border-bottom:1px solid #ffffff26}.footer-navigation-group{display:grid;align-content:start;justify-items:start;gap:8px;padding:17px 19px 20px;border-right:1px solid #ffffff18}.footer-navigation-group:first-child{padding-left:0}.footer-navigation-group:last-child{border-right:0}.footer-navigation-group h2{margin:0 0 4px;color:#d9c39f;font:600 9px/1.4 var(--sans,Arial,sans-serif);letter-spacing:1.25px;text-transform:uppercase}.footer-navigation-group>a{color:#d0d2cb;font-size:10px;line-height:1.55;text-underline-offset:3px}.footer-navigation-group>a:hover{color:#fff;text-decoration:underline}.footer-navigation-group small{color:#aeb4a8;font-size:9px;line-height:1.5}.footer-navigation-group .footer-admin-link{display:inline-flex;align-items:center;gap:7px;color:#fff;font-weight:600}.footer-admin-link svg{width:15px;height:15px;flex:none}.footer-owner-group{background:#ffffff08}
-@media(max-width:760px){.footer-navigation{grid-template-columns:repeat(2,minmax(0,1fr))}.footer-navigation-group{padding:15px 13px}.footer-navigation-group:first-child{padding-left:13px}.footer-navigation-group:nth-child(2){border-right:0}.footer-navigation-group:nth-child(3),.footer-navigation-group:nth-child(4){border-top:1px solid #ffffff18}}
-@media(max-width:420px){.footer-navigation-group{padding:14px 10px}.footer-navigation-group:first-child{padding-left:10px}.footer-navigation-group>a{font-size:10px}}
+﻿.site-footer{background:#e9e9e1!important;color:#4b5148!important;padding:34px max(7.2%,calc((100vw - 1120px)/2)) 18px!important}
+.site-footer .footer-top{padding:0 0 22px!important;border:0!important;display:flex;align-items:center;gap:24px}
+.site-footer .brand-mark{background:#59634f}
+.site-footer .footer-top>p{margin:0 auto 0 0;color:#6b7067;font-size:12px;line-height:1.65}
+.site-footer .footer-top-link{color:#555f4e;font-size:11px}
+.site-footer .footer-navigation{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:25px;padding:12px 0 20px;border:0!important}
+.site-footer .footer-navigation-group{display:grid;align-content:start;justify-items:start;gap:8px;padding:0;border:0!important}
+.site-footer .footer-navigation-group h2,.site-footer .footer-social h2{margin:0 0 3px;color:#545f4d;font:600 12px/1.4 var(--sans,Arial,sans-serif);letter-spacing:0;text-transform:none}
+.site-footer .footer-navigation-group>a,.site-footer .footer-social a{color:#5c6259;font-size:12px;line-height:1.6;text-underline-offset:3px}
+.site-footer .footer-navigation-group>a:hover,.site-footer .footer-social a:hover{color:#30382c;text-decoration:underline}
+.site-footer .footer-social-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:16px 0;border:0!important}
+.site-footer .footer-social{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:8px 16px;padding:0}
+.site-footer .footer-social h2{flex-basis:100%}
+.site-footer .footer-bottom{display:flex;align-items:center;gap:8px 20px;padding:14px 0 0;border:0!important;color:#73786e;font-size:10px;line-height:1.6}
+.site-footer .footer-bottom>span:nth-child(2){max-width:460px;text-align:left;line-height:1.6}
+.site-footer .footer-bottom .footer-admin-lock{display:inline-grid;place-items:center;width:24px;height:24px;margin-left:auto;color:#65705c;opacity:.42;border:0!important}
+.site-footer .footer-admin-lock svg{width:13px;height:13px}
+.mansionette-album{background:#f3f1e9;padding-top:64px;padding-bottom:62px}
+.mansionette-album header{max-width:650px;margin-bottom:25px}
+.mansionette-album header h2{font-size:clamp(34px,4vw,48px);margin-bottom:14px}
+.mansionette-album header>p:last-child{max-width:580px;color:#62685f;font-size:12px;line-height:1.8}
+.mansionette-album-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.mansionette-album-grid figure{position:relative;overflow:hidden;margin:0;background:#e3e1d8}
+.mansionette-album-grid img{display:block;width:100%;height:240px;object-fit:cover}
+.mansionette-album-grid figcaption{position:absolute;right:0;bottom:0;left:0;padding:10px 12px;background:linear-gradient(transparent,#151a16a8);color:#fff;font-size:10px}
+.mansionette-album>.text-link{font-size:11px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.mansionette-album.is-compact{padding:55px 7.2%;}
+.willstone-progress-photo{max-width:900px;margin:32px auto 0;background:#f3f1e9}
+.willstone-progress-photo img{display:block;width:100%;max-height:470px;object-fit:cover}
+.willstone-progress-photo figcaption{padding:11px 14px;color:#62685f;font-size:11px;line-height:1.6}
+@media(max-width:760px){.site-footer{padding:28px 6% 16px!important}.site-footer .footer-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px}.site-footer .footer-social-grid{gap:18px}.site-footer .footer-bottom{align-items:flex-start;flex-wrap:wrap}.site-footer .footer-bottom>span:nth-child(2){text-align:left}.mansionette-album{padding:46px 6%}.mansionette-album.is-compact{padding:46px 6%}.mansionette-album-grid img{height:190px}}
+@media(max-width:560px){.site-footer .footer-top{align-items:flex-start;flex-wrap:wrap;gap:12px}.site-footer .footer-top>p{flex:1 1 100%;order:3}.site-footer .footer-top-link{margin-left:auto}.site-footer .footer-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:21px 12px}.site-footer .footer-social-grid{grid-template-columns:1fr;gap:17px;padding:14px 0}.site-footer .footer-social{gap:7px 13px}.site-footer .footer-bottom{gap:6px 12px}.site-footer .footer-bottom>span:nth-child(2){order:3;flex-basis:100%;max-width:none}.site-footer .footer-bottom .footer-admin-lock{margin-left:auto}.mansionette-album-grid{grid-template-columns:1fr;gap:11px}.mansionette-album-grid img{height:auto;aspect-ratio:1.45}.mansionette-album header h2{font-size:36px}}
+.site-footer .footer-bottom .footer-admin-lock{cursor:pointer;text-decoration:none;border-radius:50%;transition:opacity .18s ease,background-color .18s ease}
+.site-footer .footer-bottom .footer-admin-lock:hover,.site-footer .footer-bottom .footer-admin-lock:focus-visible{opacity:.9;background:#d9dbd0}
+.site-footer .footer-bottom .footer-admin-lock:focus-visible{outline:2px solid #647258;outline-offset:3px}

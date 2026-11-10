@@ -1,4 +1,4 @@
--- Homes with Lew¥: Supabase/Postgres starter schema.
+﻿-- Homes with LewÂ¥: Supabase/Postgres starter schema.
 -- Run this in the Supabase SQL Editor. Never put the service_role key in the website.
 
 create table if not exists public.admin_users (
@@ -221,7 +221,7 @@ values (
   '3-bedroom bungalow with DSQ',
   '50 by 100 (unit to confirm)',
   array['Gated community', 'Cabro-paved driveways', 'Own compound', 'Garden'],
-  '/images/white-park-2/progress-08.jpg',
+  '/images/whitepark-2-estate/progress-08.jpg',
   true
 )
 on conflict (slug) do nothing;

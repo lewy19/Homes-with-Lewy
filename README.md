@@ -11,7 +11,7 @@ Open the local address printed by Vite, usually `http://localhost:5173`. For a p
 
 ## Pages
 
-The site has eleven pages: Home, Homes, About Lewis, Enquire, How it works, Viewing checklist, Home buying guide, FAQs, Willstone Homes, Areas, and Privacy.
+The public site includes its homepage, project index and detail pages, testimonials, buying guides, FAQs, privacy information and a custom 404. The private owner dashboard is at `/admin`.
 
 ## Add verified listings
 
@@ -35,11 +35,11 @@ Location and price filters appear only when the verified listings include data t
 The discreet lock icon in the site footer opens `/admin`. The dashboard permits only `lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`; Supabase row-level security enforces the same email allowlist for private records. Public visitors cannot read enquiries or draft/unverified listings.
 
 1. Create a Supabase project.
-2. Run `supabase/schema.sql` in the Supabase SQL Editor. For an existing project, run `supabase/add-enquiry-qualification-fields.sql` once to add budget, area and timeline to enquiries. It creates the tables and row-level security policies and adds the Whitepark 2 project profile plus known social links. For an existing project, run `supabase/admin-email-allowlist.sql` to replace the prior user-ID admin check with the email allowlist.
+2. Run `supabase/schema.sql` in the Supabase SQL Editor. For existing projects, run `supabase/add-enquiry-qualification-fields.sql`, `supabase/add-enquiry-contact-consent.sql`, then `supabase/add-lead-analytics-security.sql` once each, in that order. The last migration adds lead workflow fields, normalized phone validation, repeat-enquiry protection, settings, sign-in audit and event analytics. The existing owner allowlist contains lewisnjuguna926@gmail.com and lewisnjuguna777@gmail.com. Google OAuth client setup remains the following step.
 3. In Google Cloud Console, create an OAuth client for a Web application. Add your local site origin (for example, `http://localhost:5173`) and production site origin to **Authorized JavaScript origins**. In **Authorized redirect URIs**, add the callback URL shown on the Supabase **Authentication > Sign In / Providers > Google** page (it uses your project URL and `/auth/v1/callback`).
 4. Enable Google under **Supabase > Authentication > Sign In / Providers**, then paste the Google OAuth client ID and client secret there. In **Authentication > URL Configuration**, set your site URL and add `http://localhost:5173/**` plus your production URL to the allowed redirect URLs. The app returns to `/admin` after Google sign-in.
 5. Sign in with either allowlisted Google account. Other Google accounts will be denied dashboard access.
-6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Never add the `service_role` key or Google client secret to frontend environment variables or commit a populated `.env` file.
+6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel for Production, Preview and Development. Never add the `service_role` key or Google client secret to frontend variables or commit a populated `.env` file.
 7. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
 
 To add Lewis’s Reddit profile to an existing database, run `supabase/add-reddit-social-link.sql` in the Supabase SQL Editor. The profile is also included in the starter schema and the local no-database fallback.
@@ -48,9 +48,9 @@ To add Lewis’s personal Facebook profile to an existing database, run `supabas
 
 LUMA can use a Supabase Edge Function and the OpenAI Responses API for natural-language replies, grounded only in published public projects, verified published listings, active social links and fixed public site information. The website does not store chat history; recent turns are sent to OpenAI for a reply. Without the function and its API secret configured, LUMA uses a small local scripted fallback. Do not use it for sensitive personal information or internal dashboard/security topics.
 
-The enquiry form writes to Supabase only when the project is configured and the schema has been applied. To enable AI chat, follow `supabase/LUMA-SETUP.md`. Before using the new qualification fields in an existing project, run `supabase/add-enquiry-qualification-fields.sql` in the SQL Editor. Verified, published properties populate the public Homes page. Published project details and active social links are read from Supabase. The dashboard lets the owner manage properties, project details, enquiries, and social links.
+The enquiry form writes to Supabase only when the project is configured and the required migrations have been applied. Public project detail pages currently use the canonical JSDoc-typed source in `src/data/projects.js`; edits in the separate database Projects tab do not currently update that public source or create a prerendered page. Treat that as a known limitation until project CRUD is wired to the public project loader. To enable AI chat, follow `supabase/LUMA-SETUP.md`.
 
-Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by the RLS policies in `supabase/schema.sql`.
+Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by Supabase RLS. This Vite app serves a static `/admin` shell and Google OAuth runs in the browser; RLS protects database records, but static HTML is not gated by an HTTP-only server session. `noindex` and the discreet lock are not access control. A server auth gateway is still needed for strict server-side `/admin` protection and HTTP-only cookies.
 
 ## Enquiries and contact details
 

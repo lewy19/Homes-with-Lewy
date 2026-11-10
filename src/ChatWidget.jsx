@@ -87,7 +87,7 @@ function makeReply(message, homes) {
     return { text: 'For a property or business question, send Lewis a message through the public enquiry form. You can also find public social links in the website footer.', links: [{ label: 'Call Lewis', href: 'tel:+254114998890' }, { label: 'Message on WhatsApp', href: 'https://wa.me/254114998890' }, { label: 'Send an enquiry', href: '/enquire' }] };
   }
   if (/compare|difference|browse developments|all developments/.test(text)) {
-    return { text: 'Sure. I can help compare Manna Residence, Mangu Grove, Juja Grove and Whitepark 2 using the details published on this site. Which two would you like to look at? I’ll point out anything that needs confirmation.', links: [{ label: 'Manna Residence', href: '/manna-residence' }, { label: 'Mangu Grove', href: '/mangu-grove' }, { label: 'Juja Grove', href: '/juja-grove' }, { label: 'Whitepark 2', href: '/willstone-homes#white-park-2' }] };
+    return { text: 'Sure. I can help compare Manna Residence, Mangu Grove, Juja Grove and Whitepark 2 using the details published on this site. Which two would you like to look at? I’ll point out anything that needs confirmation.', links: [{ label: 'Manna Residence', href: '/projects/manna-residence' }, { label: 'Mangu Grove', href: '/projects/mangu-grove' }, { label: 'Juja Grove', href: '/projects/juja-grove' }, { label: 'Whitepark 2', href: '/projects/whitepark-2-estate' }] };
   }
   return { text: "I can't reach my conversation service just now. I can still help with basic questions about the developments, the buying guide, or how to contact Lewis." };
 }

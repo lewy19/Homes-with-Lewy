@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Couch Wall · Homes with Lew¥</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 28px; background: #25231f; color: #f7f3ec; font: 15px/1.5 Inter, ui-sans-serif, system-ui, sans-serif; }
+    .wrap { width: min(100%, 440px); }
+    .label { margin: 0 0 14px; color: #d4b78e; font-size: 12px; letter-spacing: .17em; text-transform: uppercase; }
+    .frame { position: relative; overflow: hidden; aspect-ratio: 9 / 16; border: 8px solid #171614; border-radius: 28px; background: #8d7458; box-shadow: 0 30px 90px #0008; isolation: isolate; }
+    .wall { position: absolute; inset: -24px; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(6, 1fr); gap: 7px; transform: rotate(-3deg) scale(1.1); z-index: -2; }
+    .tile { overflow: hidden; border: 3px solid #efdfc8; border-radius: 4px; background: #554a3e; box-shadow: 0 4px 10px #1c17128a; }
+    .tile img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.82) brightness(.72); }
+    .shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg,#160f09a3 0%,#24170c35 25%,#180e08a8 100%); }
+    .brand { position: absolute; top: 29px; left: 25px; right: 25px; display:flex; justify-content:space-between; align-items:center; font-size: 13px; font-weight: 700; letter-spacing:.02em; text-shadow:0 2px 8px #000; }
+    .tag { border: 1px solid #fff9; border-radius: 99px; padding: 5px 10px; font-size: 9px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .person { position:absolute; top: 45%; left:50%; width: 60%; aspect-ratio: .9; transform:translate(-50%,-50%); border: 2px dashed #fff9; border-radius: 48% 48% 20px 20px; background: linear-gradient(155deg,#f6eee3 0%,#d8c6ad 100%); box-shadow:0 18px 55px #140d0880; display:flex; flex-direction:column; justify-content:center; align-items:center; color:#493d30; text-align:center; padding:20px; }
+    .silhouette { width: 70px; height: 70px; margin-bottom: 15px; border-radius:50%; background:#b59c7b; position:relative; }
+    .silhouette:after { content:""; position:absolute; width:120px; height:80px; left:50%; top:74px; transform:translateX(-50%); border-radius:60px 60px 12px 12px; background:#b59c7b; }
+    .person strong { margin-top: 82px; font-family: Georgia,serif; font-size:clamp(20px,7vw,28px); font-weight:500; }
+    .person small { margin-top:5px; color:#6a5a48; font-size:10px; letter-spacing:.16em; text-transform:uppercase; }
+    .play { position:absolute; top:50%; left:50%; transform:translate(-50%,-36%); width:44px; height:44px; border:1px solid #fff; border-radius:50%; display:grid; place-items:center; color:white; background:#2e241c88; padding-left:3px; }
+    .bottom { position:absolute; left:26px; right:26px; bottom:31px; text-shadow:0 2px 9px #000; }
+    .eyebrow { margin:0 0 9px; color:#f2d6ac; font-size:10px; letter-spacing:.18em; text-transform:uppercase; }
+    h1 { max-width:280px; margin:0; font:500 clamp(27px,8vw,38px)/1.04 Georgia,serif; }
+    .bottom p { margin:12px 0 0; max-width:285px; color:#f8f2e9; font-size:12px; }
+    .note { margin: 14px 3px 0; color:#d8d3cb; font-size:12px; }
+    @media (max-width:520px) { body { padding:16px; } .frame { border-radius:22px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="label">Social concept · Couch Wall</p>
+    <section class="frame" aria-label="Static Couch Wall concept showing Homes with Lew¥ project photos around a Lewis video placeholder">
+      <div class="wall" aria-hidden="true">
+        <div class="tile"><img src="../public/images/mansionatte/mansionatte-01.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-06.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-01.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-03.jpg" alt=""></div>
+        <div class="tile"><img src="../public/images/mansionatte/mansionatte-07.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-02.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-09.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-04.jpg" alt=""></div>
+        <div class="tile"><img src="../public/images/whitepark-2-estate/progress-03.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-11.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-12.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-05.jpg" alt=""></div>
+        <div class="tile"><img src="../public/images/mansionatte/mansionatte-13.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-05.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-14.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-08.jpg" alt=""></div>
+        <div class="tile"><img src="../public/images/mansionatte/mansionatte-02.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-06.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-15.jpg" alt=""></div><div class="tile"><img src="../public/images/mansionatte/mansionatte-10.jpg" alt=""></div>
+        <div class="tile"><img src="../public/images/whitepark-2-estate/progress-07.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-08.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-09.jpg" alt=""></div><div class="tile"><img src="../public/images/whitepark-2-estate/progress-10.jpg" alt=""></div>
+      </div>
+      <div class="shade"></div>
+      <div class="brand"><span>Homes with Lew¥</span><span class="tag">Homes · Progress</span></div>
+      <div class="person"><div class="silhouette" aria-hidden="true"></div><strong>Lewis Njuguna</strong><small>Video placeholder</small><span class="play" aria-hidden="true">▶</span></div>
+      <div class="bottom"><p class="eyebrow">A closer look at the homes</p><h1>Good homes start with a closer look.</h1><p>Property and project photos from Willstone Homes.</p></div>
+    </section>
+    <p class="note">Static preview only. The center placeholder can be replaced with Lewis on camera when footage is available.</p>
+  </main>
+</body>
+</html>
