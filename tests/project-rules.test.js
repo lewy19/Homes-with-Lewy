@@ -85,9 +85,9 @@ test('H: project image ownership is checked against a slug path segment', () => 
   }
 });
 
-test('Public footer contains no clickable admin route', () => {
+test('Public footer includes an accessible padlock link to admin sign in', () => {
   const app = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8');
-  assert.doesNotMatch(app, /href=["']\/admin(?:["'/?#])/);
+  assert.match(app, /className="footer-admin-lock" href="\/admin" aria-label="Admin sign in"/);
 });
 
 test('Admin security helper denies missing sessions and unknown accounts', () => {

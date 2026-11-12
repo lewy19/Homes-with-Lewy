@@ -34,7 +34,7 @@ Location and price filters appear only when the verified listings include data t
 
 ## Supabase and the owner dashboard
 
-Open `/admin` directly to reach the owner dashboard. It permits only `lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`; Supabase row-level security enforces the same email allowlist for private records. Public visitors cannot read enquiries or draft/unverified listings.
+Use the padlock icon in the site footer or open `/admin` directly to reach the owner dashboard. It permits only `lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`; Supabase row-level security enforces the same email allowlist for private records. Public visitors cannot read enquiries or draft/unverified listings.
 
 1. Create a Supabase project.
 2. Run `supabase/schema.sql` in the Supabase SQL Editor. For existing projects, run `supabase/add-enquiry-qualification-fields.sql`, `supabase/add-enquiry-contact-consent.sql`, `supabase/add-lead-analytics-security.sql`, then `supabase/add-make-analytics.sql` once each, in that order. The lead analytics migration adds lead workflow fields, normalized phone validation, repeat-enquiry protection, settings, sign-in audit and event analytics. The Make migration adds automation run events. The existing owner allowlist contains lewisnjuguna926@gmail.com and lewisnjuguna777@gmail.com. Google OAuth client setup remains the following step.
@@ -42,7 +42,7 @@ Open `/admin` directly to reach the owner dashboard. It permits only `lewisnjugu
 4. Enable Google under **Supabase > Authentication > Sign In / Providers**, then paste the Google OAuth client ID and client secret there. In **Authentication > URL Configuration**, set your site URL and add `http://localhost:5173/**` plus your production URL to the allowed redirect URLs. The app returns to `/admin` after Google sign-in.
 5. Sign in with either allowlisted Google account. Other Google accounts will be denied dashboard access.
 6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel for Production, Preview and Development. Never add the `service_role` key or Google client secret to frontend variables or commit a populated `.env` file.
-7. Restart `npm run dev`. Open `/admin` directly to sign in.
+7. Restart `npm run dev`. Use the footer padlock or open `/admin` directly to sign in.
 
 To send Make scenario results to the dashboard Analytics tab, deploy the `make-analytics` Edge Function and configure its secret using [the Make analytics setup guide](docs/make-analytics.md).
 
@@ -54,7 +54,7 @@ LUMA can use a Supabase Edge Function and the OpenAI Responses API for natural-l
 
 The enquiry form writes to Supabase only when the project is configured and the required migrations have been applied. The public project index and detail pages load published projects from Supabase and merge them with the canonical JSDoc-typed source in `src/data/projects.js`; admin project edits are reflected after the page reloads. New project routes are handled by the client side route fallback. To enable AI chat, follow `supabase/LUMA-SETUP.md`.
 
-Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by Supabase RLS. This Vite app serves a static `/admin` shell and Google OAuth runs in the browser; RLS protects database records, but static HTML is not gated by an HTTP-only server session. Hiding the route from footer navigation is not access control. A server auth gateway is still needed for strict server-side `/admin` protection and HTTP-only cookies.
+Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by Supabase RLS. This Vite app serves a static `/admin` shell and Google OAuth runs in the browser; RLS protects database records, but static HTML is not gated by an HTTP-only server session. The footer padlock is only a shortcut, not access control. A server auth gateway is still needed for strict server-side `/admin` protection and HTTP-only cookies.
 
 ## Enquiries and contact details
 
