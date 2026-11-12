@@ -3,3 +3,6 @@ verify_jwt = false
 
 [functions.luma-chat]
 verify_jwt = false
+
+[functions.make-analytics]
+verify_jwt = false

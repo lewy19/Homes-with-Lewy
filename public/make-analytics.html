@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Make analytics setup | Homes with Lewy</title>
+  <style>
+    body{max-width:760px;margin:48px auto;padding:0 20px;color:#20271f;background:#f7f5ef;font:16px/1.7 system-ui,sans-serif}main{padding:28px;background:#fffefa;border:1px solid #e5e1d7}h1,h2{font-family:Georgia,serif}code,pre{overflow-wrap:anywhere;background:#efeee7;padding:3px 6px}pre{padding:14px}li{margin:8px 0}a{color:#3e4738}
+  </style>
+</head>
+<body><main>
+  <p><a href="/admin">← Owner dashboard</a></p>
+  <h1>Send Make scenario analytics to the dashboard</h1>
+  <p>Each event appears in Analytics as a success, failure or skip. Send only aggregate labels; never send names, phone numbers, email addresses or enquiry messages.</p>
+  <h2>One-time setup</h2>
+  <ol>
+    <li>Run <code>supabase/add-make-analytics.sql</code> in the Supabase SQL Editor after the lead analytics migration.</li>
+    <li>Create a random secret of at least 32 characters. Store it in Supabase as <code>MAKE_ANALYTICS_WEBHOOK_SECRET</code> and in Make's secret storage. Never add it to a browser setting.</li>
+    <li>Deploy the <code>make-analytics</code> Edge Function. It uses the standard <code>SUPABASE_URL</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code> function secrets.</li>
+    <li>In Supabase CLI, run <code>supabase secrets set MAKE_ANALYTICS_WEBHOOK_SECRET=...</code>, then <code>supabase functions deploy make-analytics</code>.</li>
+    <li>In Make, add an HTTP → Make a request module. Use POST to <code>https://PROJECT_REF.supabase.co/functions/v1/make-analytics</code>.</li>
+    <li>Add headers <code>x-make-analytics-secret: YOUR_SECRET</code>, <code>apikey: YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY</code> and <code>Content-Type: application/json</code>; send a raw JSON body. The publishable/anon key may be used in Make; never use the service role key.</li>
+  </ol>
+  <h2>Example body</h2>
+  <pre>{
+  "event_name": "automation_succeeded",
+  "page_path": "/integrations/make",
+  "project_slug": "manna-residence",
+  "source": "make",
+  "campaign": "lead-follow-up",
+  "device": "desktop"
+}</pre>
+  <p>Accepted automation event names are <code>automation_succeeded</code>, <code>automation_failed</code> and <code>automation_skipped</code>. A Make error handler can send failures; add only one reporting module per outcome because retries are counted as new events. You can also send an existing website analytics event name. The optional project slug and campaign label appear in the dashboard breakdowns.</p>
+</main></body>
+</html>

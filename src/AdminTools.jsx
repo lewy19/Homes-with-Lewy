@@ -60,7 +60,7 @@ export function LeadsPanel({ rows, updateLead, removeLead, projects: projectRows
   </section>;
 }
 
-export function AnalyticsPanel({ events, leads, projects: projectRows = [] }) {
+export function AnalyticsPanel({ events, leads, projects: projectRows = [], supabaseUrl = '' }) {
   const [days, setDays] = useState(30);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -78,6 +78,9 @@ export function AnalyticsPanel({ events, leads, projects: projectRows = [] }) {
   };
   const pageViews = filtered.filter(event => event.event_name === 'page_view').length;
   const clicks = filtered.filter(event => ['whatsapp_click', 'call_click'].includes(event.event_name)).length;
+  const automationSuccesses = filtered.filter(event => event.event_name === 'automation_succeeded').length;
+  const automationFailures = filtered.filter(event => event.event_name === 'automation_failed').length;
+  const automationSkips = filtered.filter(event => event.event_name === 'automation_skipped').length;
   const enquiries = leads.filter(lead => new Date(lead.created_at).getTime() >= cutoff).length;
   const viewings = leads.filter(lead => lead.status === 'Viewing booked' && new Date(lead.created_at).getTime() >= cutoff).length;
   const sales = leads.filter(lead => lead.status === 'Won' && new Date(lead.created_at).getTime() >= cutoff).length;
@@ -105,8 +108,15 @@ export function AnalyticsPanel({ events, leads, projects: projectRows = [] }) {
   return <section className="admin-panel"><div className="admin-panel-heading"><div><h2>Privacy-friendly analytics</h2><p>First-party event counts; no visitor identifiers or fingerprinting.</p></div><label>Range<select value={days} onChange={event => setDays(Number(event.target.value))}><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select></label></div>
     <div className="admin-filters"><label>From date<input type="date" value={from} onChange={event => setFrom(event.target.value)}/></label><label>To date<input type="date" value={to} onChange={event => setTo(event.target.value)}/></label></div>
     <div className="admin-stats"><Stat label="Page views" value={pageViews}/><Stat label="Contact clicks" value={clicks}/><Stat label="Enquiries" value={enquiries}/><Stat label="Viewing booked" value={viewings}/><Stat label="Won" value={sales}/></div>
+    <section className="admin-panel make-analytics-setup"><div className="admin-panel-heading"><div><h2>Make automation</h2><p>Send scenario outcomes here to see runs in this dashboard.</p></div><span className="admin-integration-badge">{automationSuccesses + automationFailures + automationSkips} runs in range</span></div>
+      <div className="admin-automation-stats"><Stat label="Successful" value={automationSuccesses}/><Stat label="Failed" value={automationFailures}/><Stat label="Skipped" value={automationSkips}/></div>
+      <p>In Make, add an <strong>HTTP → Make a request</strong> module at the end of the scenario (and a separate error handler for failures). Send a POST request with the secret header and your Supabase publishable/anon key in an <code>apikey</code> header to this endpoint:</p>
+      <code className="make-endpoint">{supabaseUrl ? `${supabaseUrl.replace(/\/$/, '')}/functions/v1/make-analytics` : 'Configure VITE_SUPABASE_URL to show the endpoint'}</code>
+      <p>Set header <code>x-make-analytics-secret</code> to the same secret stored in Supabase as <code>MAKE_ANALYTICS_WEBHOOK_SECRET</code>. Never put the secret in a public URL, website setting or frontend variable.</p>
+      <p>Send JSON such as <code>{'{ "event_name": "automation_succeeded", "campaign": "lead-follow-up", "project_slug": "manna-residence" }'}</code>. See <a href="/make-analytics.html" target="_blank" rel="noreferrer">the setup guide</a> for deployment and error-handler setup. This only stores aggregate event labels; do not send customer contact details.</p>
+    </section>
     <section className="admin-panel"><h2>Project conversion funnel</h2><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Project</th><th>Views</th><th>Clicks</th><th>Enquiries</th><th>Viewings</th><th>Sales</th></tr></thead><tbody>{funnel.map(row => <tr key={row.project}><th>{row.project}</th><td>{row.views} (100%)</td><td>{row.clicks} ({row.percent(row.clicks)})</td><td>{row.enquiries} ({row.percent(row.enquiries)})</td><td>{row.viewings} ({row.percent(row.viewings)})</td><td>{row.won} ({row.percent(row.won)})</td></tr>)}</tbody></table></div></section>
-    <div className="admin-columns"><Breakdown title="Pages / projects" rows={aggregate('project_slug').map(row => ({ ...row, label: row.label || 'Other pages' }))}/><Breakdown title="Enquiries by source / campaign" rows={[...enquirySources].map(([label, count]) => ({ label, count, percent: Math.round(count / Math.max(leads.filter(withinLeadDate).length, 1) * 100) }))}/><Breakdown title="Traffic sources" rows={aggregate('source')}/><Breakdown title="Events" rows={aggregate('event_name')}/><Breakdown title="Devices" rows={aggregate('device')}/></div>
+    <div className="admin-columns"><Breakdown title="Pages / projects" rows={aggregate('project_slug').map(row => ({ ...row, label: row.label || 'Other pages' }))}/><Breakdown title="Enquiries by source / campaign" rows={[...enquirySources].map(([label, count]) => ({ label, count, percent: Math.round(count / Math.max(leads.filter(withinLeadDate).length, 1) * 100) }))}/><Breakdown title="Traffic sources" rows={aggregate('source')}/><Breakdown title="Events" rows={aggregate('event_name')}/><Breakdown title="Event campaigns / scenarios" rows={aggregate('campaign').map(row => ({ ...row, label: row.label === 'Unknown' ? 'No campaign' : row.label }))}/><Breakdown title="Devices" rows={aggregate('device')}/></div>
   </section>;
 }
 

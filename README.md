@@ -13,6 +13,8 @@ Open the local address printed by Vite, usually `http://localhost:5173`. For a p
 
 The public site includes its homepage, project index and detail pages, testimonials, buying guides, FAQs, privacy information and a custom 404. The private owner dashboard is at `/admin`.
 
+The site is a responsive progressive web app. On Android, open the browser menu and choose **Install app** or **Add to Home screen**. On iPhone, open the site in Safari, tap **Share**, then **Add to Home Screen**. Installation requires the published HTTPS site.
+
 ## Add verified listings
 
 Edit `src/data/properties.js`. Only records marked `verified: true` are displayed. Add confirmed facts and approved photos from Willstone Homes:
@@ -32,15 +34,17 @@ Location and price filters appear only when the verified listings include data t
 
 ## Supabase and the owner dashboard
 
-The discreet lock icon in the site footer opens `/admin`. The dashboard permits only `lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`; Supabase row-level security enforces the same email allowlist for private records. Public visitors cannot read enquiries or draft/unverified listings.
+Open `/admin` directly to reach the owner dashboard. It permits only `lewisnjuguna926@gmail.com` and `lewisnjuguna777@gmail.com`; Supabase row-level security enforces the same email allowlist for private records. Public visitors cannot read enquiries or draft/unverified listings.
 
 1. Create a Supabase project.
-2. Run `supabase/schema.sql` in the Supabase SQL Editor. For existing projects, run `supabase/add-enquiry-qualification-fields.sql`, `supabase/add-enquiry-contact-consent.sql`, then `supabase/add-lead-analytics-security.sql` once each, in that order. The last migration adds lead workflow fields, normalized phone validation, repeat-enquiry protection, settings, sign-in audit and event analytics. The existing owner allowlist contains lewisnjuguna926@gmail.com and lewisnjuguna777@gmail.com. Google OAuth client setup remains the following step.
+2. Run `supabase/schema.sql` in the Supabase SQL Editor. For existing projects, run `supabase/add-enquiry-qualification-fields.sql`, `supabase/add-enquiry-contact-consent.sql`, `supabase/add-lead-analytics-security.sql`, then `supabase/add-make-analytics.sql` once each, in that order. The lead analytics migration adds lead workflow fields, normalized phone validation, repeat-enquiry protection, settings, sign-in audit and event analytics. The Make migration adds automation run events. The existing owner allowlist contains lewisnjuguna926@gmail.com and lewisnjuguna777@gmail.com. Google OAuth client setup remains the following step.
 3. In Google Cloud Console, create an OAuth client for a Web application. Add your local site origin (for example, `http://localhost:5173`) and production site origin to **Authorized JavaScript origins**. In **Authorized redirect URIs**, add the callback URL shown on the Supabase **Authentication > Sign In / Providers > Google** page (it uses your project URL and `/auth/v1/callback`).
 4. Enable Google under **Supabase > Authentication > Sign In / Providers**, then paste the Google OAuth client ID and client secret there. In **Authentication > URL Configuration**, set your site URL and add `http://localhost:5173/**` plus your production URL to the allowed redirect URLs. The app returns to `/admin` after Google sign-in.
 5. Sign in with either allowlisted Google account. Other Google accounts will be denied dashboard access.
 6. Copy `.env.example` to `.env` and fill in the project URL and public anon key. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel for Production, Preview and Development. Never add the `service_role` key or Google client secret to frontend variables or commit a populated `.env` file.
-7. Restart `npm run dev`. Use the small lock icon in the footer to sign in at `/admin`.
+7. Restart `npm run dev`. Open `/admin` directly to sign in.
+
+To send Make scenario results to the dashboard Analytics tab, deploy the `make-analytics` Edge Function and configure its secret using [the Make analytics setup guide](docs/make-analytics.md).
 
 To add Lewis’s Reddit profile to an existing database, run `supabase/add-reddit-social-link.sql` in the Supabase SQL Editor. The profile is also included in the starter schema and the local no-database fallback.
 
@@ -48,9 +52,9 @@ To add Lewis’s personal Facebook profile to an existing database, run `supabas
 
 LUMA can use a Supabase Edge Function and the OpenAI Responses API for natural-language replies, grounded only in published public projects, verified published listings, active social links and fixed public site information. The website does not store chat history; recent turns are sent to OpenAI for a reply. Without the function and its API secret configured, LUMA uses a small local scripted fallback. Do not use it for sensitive personal information or internal dashboard/security topics.
 
-The enquiry form writes to Supabase only when the project is configured and the required migrations have been applied. Public project detail pages currently use the canonical JSDoc-typed source in `src/data/projects.js`; edits in the separate database Projects tab do not currently update that public source or create a prerendered page. Treat that as a known limitation until project CRUD is wired to the public project loader. To enable AI chat, follow `supabase/LUMA-SETUP.md`.
+The enquiry form writes to Supabase only when the project is configured and the required migrations have been applied. The public project index and detail pages load published projects from Supabase and merge them with the canonical JSDoc-typed source in `src/data/projects.js`; admin project edits are reflected after the page reloads. New project routes are handled by the client side route fallback. To enable AI chat, follow `supabase/LUMA-SETUP.md`.
 
-Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by Supabase RLS. This Vite app serves a static `/admin` shell and Google OAuth runs in the browser; RLS protects database records, but static HTML is not gated by an HTTP-only server session. `noindex` and the discreet lock are not access control. A server auth gateway is still needed for strict server-side `/admin` protection and HTTP-only cookies.
+Add the same public URL and anon key as deployment environment variables when publishing. Database access remains governed by Supabase RLS. This Vite app serves a static `/admin` shell and Google OAuth runs in the browser; RLS protects database records, but static HTML is not gated by an HTTP-only server session. Hiding the route from footer navigation is not access control. A server auth gateway is still needed for strict server-side `/admin` protection and HTTP-only cookies.
 
 ## Enquiries and contact details
 

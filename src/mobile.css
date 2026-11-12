@@ -1,0 +1,28 @@
+/* Phone-first touches shared by public pages and the owner dashboard. */
+@media (max-width: 650px) {
+  html { scroll-padding-top: 72px; }
+  body { padding-bottom: env(safe-area-inset-bottom); }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  .field input, .field select, .field textarea,
+  .admin-panel input, .admin-panel select, .admin-panel textarea,
+  .admin-enquiry input, .admin-enquiry select, .admin-enquiry textarea,
+  .admin-filters input, .admin-filters select {
+    min-width: 0;
+    font-size: 16px !important;
+  }
+  .admin-topbar, .admin-panel, .admin-card { min-width: 0; }
+  .admin-user button, .admin-primary, .admin-secondary,
+  .admin-record-actions button, .admin-quick-actions button {
+    min-height: 44px;
+  }
+  .admin-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .admin-table { min-width: 620px; }
+  .make-endpoint, .make-analytics-setup code { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 360px) {
+  .admin-filters { grid-template-columns: 1fr; }
+  .admin-main { padding-right: 12px; padding-left: 12px; }
+  .admin-sidebar { padding-right: 12px; padding-left: 12px; }
+}

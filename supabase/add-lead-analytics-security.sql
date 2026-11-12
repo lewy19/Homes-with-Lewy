@@ -11,6 +11,10 @@ alter table public.enquiries
 
 -- Migrate existing workflow values into the requested lead statuses.
 alter table public.enquiries drop constraint if exists enquiries_status_check;
+alter table public.enquiries drop constraint if exists enquiries_phone_e164_check;
+alter table public.enquiries drop constraint if exists enquiries_source_length_check;
+alter table public.enquiries drop constraint if exists enquiries_campaign_length_check;
+alter table public.enquiries drop constraint if exists enquiries_private_notes_length_check;
 update public.enquiries set status = case status
   when 'in_progress' then 'Contacted'
   when 'resolved' then 'Won'
